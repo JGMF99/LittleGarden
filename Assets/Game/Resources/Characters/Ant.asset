@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18e35fd452d1a449acb8158c5f4fdf9, type: 3}
+  m_Name: Ant
+  m_EditorClassIdentifier: 
+  name: Ant
+  description: 
+  frontSprite: {fileID: 21300000, guid: 8ad35f48cba76e24a866d6eb4937ad13, type: 3}
+  sideSprite: {fileID: 21300000, guid: d9d90b72664a7174da57c13c00a5734b, type: 3}
+  specie: 0
+  maxHp: 100
+  attack: 10
+  defense: 5
+  speed: 70
+  learnableSkills:
+  - skillBase: {fileID: 11400000, guid: b556311db1353e84cb098d774ca8ce3e, type: 2}
+    level: 1
+  - skillBase: {fileID: 11400000, guid: 8b790eccafea138439f3c7816269dbe5, type: 2}
+    level: 3
