@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18e35fd452d1a449acb8158c5f4fdf9, type: 3}
+  m_Name: Bee
+  m_EditorClassIdentifier: 
+  name: Bee
+  description: 
+  frontSprite: {fileID: 21300000, guid: 6e5d913536734ff408d3fbb4277c4ac4, type: 3}
+  sideSprite: {fileID: 21300000, guid: deb87cd484f4dca49a6ee9104fbaa95c, type: 3}
+  specie: 1
+  maxHp: 100
+  attack: 50
+  defense: 40
+  speed: 400
+  learnableSkills:
+  - skillBase: {fileID: 11400000, guid: f43917932a6fd194ca4f74ad6d14cfb8, type: 2}
+    level: 1

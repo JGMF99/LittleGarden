@@ -6,19 +6,45 @@ using UnityEngine.UI;
 public class BattleUnit : MonoBehaviour
 {
 
-    [SerializeField] CharactersBase _base;
-    [SerializeField] int level;
-
 
     [SerializeField] bool isPlayerUnit;
 
     public Character Character{get; set; }
+    public bool IsPlayerUnit { get => isPlayerUnit; set => isPlayerUnit = value; }
 
-    public void Setup()
+    public void Setup(Character character)
     {
+        if(character != null)
+        {
+            Character = character;
 
-        Character = new Character(_base, level);
+            GetComponent<Image>().sprite = Character.Base.SideSprite;
+            GetComponent<Image>().color = Color.white;
+        }
+        else
+        {
+            GetComponent<Image>().color = Color.clear;
+        }
+        
+    }
 
-        GetComponent<Image>().sprite = Character.Base.SideSprite;
+    public void SetupMenu(Character character)
+    {
+        if (character != null)
+        {
+            Character = character;
+
+            GetComponent<Image>().sprite = Character.Base.FrontSprite;
+        }
+        else
+        {
+            GetComponent<Image>().color = Color.clear;
+        }
+
+    }
+
+    public void BattleUnitDied()
+    {
+        GetComponent<Image>().color = Color.clear;
     }
 }

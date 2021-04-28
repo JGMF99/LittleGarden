@@ -1,47 +1,104 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
+using Random = UnityEngine.Random;
 
 public enum BattleState
 {
-    Start, PlayerAction, PlayerSkill, EnemyMove, Busy
+    Start, PlayerAction, PlayerSkill, TargetEnemy, EnemyMove, Busy
 }
 
 public class BattleSystem : MonoBehaviour
 {
 
-    [SerializeField] BattleUnit playerUnit;
+    
     [SerializeField] BattleHud playerHud;
 
-    [SerializeField] BattleUnit enemyUnit;
+    BattleUnit playerUnit;
+    [SerializeField] List<BattleUnit> playerGrid;
+    BattleUnit enemyUnit;
+    [SerializeField] List<BattleUnit> enemyGrid;
 
     [SerializeField] BattleDialogBox dialogBox;
+
+    public event Action<bool> OnBattleOver;
 
     BattleState state;
 
     int currentAction;
     int currentSkill;
+    int currentTarget;
 
-    private void Start()
+    CharacterParty team;
+    EnemyParty enemies;
+
+    List<BattleUnit> playerUnits;
+    List<BattleUnit> enemyUnits;
+    List<BattleUnit> turnsQueue;
+
+
+    public void StartBattle(CharacterParty team, EnemyParty enemies)
     {
+        this.team = team;
+        this.enemies = enemies;
         StartCoroutine(SetupBattle());
     }
 
     public IEnumerator SetupBattle()
     {
 
-        playerUnit.Setup();
-        playerHud.SetData(playerUnit.Character);
+        playerUnits = new List<BattleUnit>();
+        enemyUnits = new List<BattleUnit>();
+        turnsQueue = new List<BattleUnit>();
 
-        enemyUnit.Setup();
+        foreach(var c in team.Team)
+        {
+            playerGrid[c.Position].Setup(c);
 
-        dialogBox.SetSkillNames(playerUnit.Character.Skills);
+            turnsQueue.Add(playerGrid[c.Position]);
+            playerUnits.Add(playerGrid[c.Position]);
+        }
+
+        //TODO - Player stats
+        playerHud.SetData(playerUnits[0].Character);
+
+        foreach (var e in enemies.Team)
+        {
+            enemyGrid[e.Position].Setup(e);
+
+            turnsQueue.Add(enemyGrid[e.Position]);
+            enemyUnits.Add(enemyGrid[e.Position]);
+        }
+
+        turnsQueue = turnsQueue.OrderByDescending(o => o.Character.Speed).ToList();
 
         yield return null;
 
-        PlayerAction();
+        DecideNextTurn();
+
+    }
+
+    void DecideNextTurn()
+    {
+        var nextTurn = turnsQueue[0];
+
+        turnsQueue.Remove(nextTurn);
+        turnsQueue.Add(nextTurn);
+
+        if (nextTurn.IsPlayerUnit)
+        {
+            dialogBox.SetSkillNames(nextTurn.Character.Skills);
+            dialogBox.SetEnemyImages(enemyUnits);
+            playerUnit = nextTurn;
+            PlayerAction();
+        }
+        else
+        {
+            enemyUnit = nextTurn;
+            StartCoroutine(EnemyMove());
+        }
     }
 
     void PlayerAction()
@@ -58,13 +115,22 @@ public class BattleSystem : MonoBehaviour
         dialogBox.EnableActionSelector(false);
         dialogBox.EnablePlayerHud(false);
         dialogBox.EnableSkillSelector(true);
+        dialogBox.EnableSkillDetails(true);
+    }
+
+    void TargetEnemy()
+    {
+        state = BattleState.TargetEnemy;
+
+        dialogBox.EnableSkillDetails(false);
+        dialogBox.EnableEnemySelector(true);
     }
 
     IEnumerator PerformPlayerSkill()
     {
         state = BattleState.Busy;
 
-        var skill = playerUnit.Character.Skills[currentSkill];
+        var skill = playerUnits[0].Character.Skills[currentSkill];
 
         yield return new WaitForSeconds(1f);
 
@@ -73,35 +139,66 @@ public class BattleSystem : MonoBehaviour
         if (isFainted)
         {
             Debug.Log("Enemy has died");
+
+            yield return new WaitForSeconds(2f);
+
+            enemyUnits.Remove(enemyUnit);
+            turnsQueue.Remove(enemyUnit);
+            enemyGrid[enemyUnit.Character.Position].BattleUnitDied();
+
         }
+
+        if (enemyUnits.Count == 0)
+        {
+            OnBattleOver(true);
+        }
+
         else
         {
-            StartCoroutine(EnemyMove());
+            DecideNextTurn();
         }
+
     }
 
     IEnumerator EnemyMove()
     {
+        Debug.Log("Enemy " + enemyUnit.Character.Base.Name + " attacked");
+
         state = BattleState.EnemyMove;
 
         var skill = enemyUnit.Character.GetRandomSkill();
 
         yield return new WaitForSeconds(1f);
 
-        bool isFainted = playerUnit.Character.TakeDamage(skill, enemyUnit.Character);
+        var playerUnitAttacked = playerUnits[Random.Range(0, playerUnits.Count)];
+
+        bool isFainted = playerUnitAttacked.Character.TakeDamage(skill, enemyUnit.Character);
+
         playerHud.UpdateHP();
 
         if (isFainted)
         {
             Debug.Log("Player has died");
+            yield return new WaitForSeconds(2f);
+            playerUnits.Remove(playerUnitAttacked);
+            turnsQueue.Remove(playerUnitAttacked);
+            playerGrid[playerUnitAttacked.Character.Position].BattleUnitDied();
+
         }
+
+
+        if (playerUnits.Count == 0)
+        {
+            OnBattleOver(false);
+        }
+
         else
         {
-            PlayerAction();
+            DecideNextTurn();
         }
     }
 
-    private void Update()
+    public void HandleUpdate()
     {
         if(state == BattleState.PlayerAction)
         {
@@ -109,6 +206,10 @@ public class BattleSystem : MonoBehaviour
         }else if(state == BattleState.PlayerSkill)
         {
             HandleSkillSelection();
+        }
+        else if (state == BattleState.TargetEnemy)
+        {
+            HandleTargetEnemy();
         }
     }
 
@@ -179,9 +280,36 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
+            
+
+            TargetEnemy();
+
+            //StartCoroutine(PerformPlayerSkill());
+        }
+    }
+
+    void HandleTargetEnemy()
+    {
+        if (Input.GetKeyDown(KeyCode.D) && currentTarget < enemies.Team.Count - 1)
+        {
+            ++currentTarget;
+        }
+        else if (Input.GetKeyDown(KeyCode.A) && currentTarget > 0)
+        {
+            --currentTarget;
+        }
+
+        dialogBox.UpdateEnemySelection(currentTarget);
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
             dialogBox.EnableSkillSelector(false);
+            dialogBox.EnableEnemySelector(false);
+
+            enemyUnit = enemyUnits.Where(x => x.Character == dialogBox.EnemyImages[currentTarget].Character).FirstOrDefault();
 
             StartCoroutine(PerformPlayerSkill());
         }
+
     }
 }

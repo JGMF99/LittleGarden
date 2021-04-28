@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{917E4798-18E9-F3BB-3DED-F0DDA1882DDC}</ProjectGuid>
+    <ProjectGuid>{83CC5154-2851-5F13-56DB-588C0E03F9CD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -63,9 +63,13 @@
     <Compile Include="Assets\Scripts\Battle\HPBar.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleUnit.cs" />
     <Compile Include="Assets\Scripts\Characters\CharactersBase.cs" />
+    <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\Battle\BattleDialogBox.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleHud.cs" />
-    <Compile Include="Assets\Scripts\Battle\BattleDialogBox.cs" />
+    <Compile Include="Assets\Scripts\Characters\CharacterParty.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\MapArea.cs" />
+    <Compile Include="Assets\Scripts\Battle\EnemyParty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -12,11 +12,16 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] GameObject skillSelector;
     [SerializeField] GameObject skillDetails;
     [SerializeField] GameObject playerHud;
+    [SerializeField] GameObject enemySelector;
 
     [SerializeField] List<Text> actionTexts;
     [SerializeField] List<Text> skillText;
 
+    [SerializeField] List<BattleUnit> enemyImages;
+
     [SerializeField] Text descriptionText;
+
+    public List<BattleUnit> EnemyImages { get => enemyImages; set => enemyImages = value; }
 
     public void EnableActionSelector(bool enabled)
     {
@@ -26,12 +31,21 @@ public class BattleDialogBox : MonoBehaviour
     public void EnableSkillSelector(bool enabled)
     {
         skillSelector.SetActive(enabled);
+    }
+
+    public void EnableSkillDetails(bool enabled)
+    {
         skillDetails.SetActive(enabled);
     }
 
     public void EnablePlayerHud(bool enabled)
     {
         playerHud.SetActive(enabled);
+    }
+
+    public void EnableEnemySelector(bool enabled)
+    {
+        enemySelector.SetActive(enabled);
     }
 
     public void UpdateActionSelection(int selectedAction)
@@ -66,6 +80,24 @@ public class BattleDialogBox : MonoBehaviour
         descriptionText.text = skill.Base.Description;
     }
 
+    public void UpdateEnemySelection(int selectedEnemy)
+    {
+        for (int i = 0; i < enemyImages.Count; i++)
+        {
+            if (i == selectedEnemy)
+            {
+                enemyImages[i].GetComponent<Image>().color = new Color(enemyImages[i].GetComponent<Image>().color.r, 
+                    enemyImages[i].GetComponent<Image>().color.g, enemyImages[i].GetComponent<Image>().color.b, 0.5f);
+            }
+            else if(enemyImages[i].GetComponent<Image>().color != Color.clear)
+            {
+                enemyImages[i].GetComponent<Image>().color = new Color(enemyImages[i].GetComponent<Image>().color.r, 
+                    enemyImages[i].GetComponent<Image>().color.g, enemyImages[i].GetComponent<Image>().color.b, 1f);
+            }
+        }
+
+    }
+
     public void SetSkillNames(List<Skill> skills)
     {
 
@@ -78,6 +110,21 @@ public class BattleDialogBox : MonoBehaviour
                 skillText[i].text = "-";
 
         }
+
+    }
+
+    public void SetEnemyImages(List<BattleUnit> enemies)
+    {
+
+        for (int i = 0; i < enemyImages.Count; i++)
+        {
+            if(i < enemies.Count)
+                enemyImages[i].SetupMenu(enemies[i].Character);
+            else
+                enemyImages[i].SetupMenu(null);
+
+        }
+
 
     }
 }

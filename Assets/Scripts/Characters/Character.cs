@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Character
 {
 
-    CharactersBase _base;
-    int level;
+    [SerializeField] CharactersBase _base;
+    [SerializeField] int level;
+    [SerializeField] int position;
 
     public int HP { get; set; }
+    
 
     public List<Skill> Skills { get; set; }
 
-    public Character(CharactersBase cBase, int cLevel)
+    public void Init()
     {
-        _base = cBase;
-        level = cLevel;
+
         HP = MaxHp;
 
         //Generate Moves
@@ -54,7 +56,7 @@ public class Character
 
     public CharactersBase Base { get => _base; set => _base = value; }
     public int Level { get => level; set => level = value; }
-
+    public int Position { get => position; set => position = value; }
 
     public bool TakeDamage(Skill skill, Character attacker)
     {

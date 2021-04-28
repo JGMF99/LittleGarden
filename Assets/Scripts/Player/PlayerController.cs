@@ -11,10 +11,14 @@ public class PlayerController : MonoBehaviour
     public LayerMask solidObjetsLayer;
     public LayerMask dangerZoneLayer;
 
+    public event Action OnEncountered;
+
     private Animator animator;
 
     private int stepsTaken = 0;
     public int stepsNeededForBattle = 10000;
+
+    private bool isMoving;
 
     private void Awake()
     {
@@ -28,36 +32,32 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void HandleUpdate()
     {
 
         var targetPos = transform.position;
         Vector3 input = new Vector3(0, 0);
-        bool isMoving = true;
+        isMoving = true;
 
         if (Input.GetKey(KeyCode.W))
         {
             input.x = 0;
             input.y = 1;
-            //targetPos.y += moveSpeed;
         }
         else if (Input.GetKey(KeyCode.A))
         {
             input.x = -1;
             input.y = 0;
-            //targetPos.x -= moveSpeed;
         }
         else if (Input.GetKey(KeyCode.S))
         {
             input.x = 0;
             input.y = -1;
-            //targetPos.y -= moveSpeed;
         }
         else if (Input.GetKey(KeyCode.D))
         {
             input.x = 1;
             input.y = 0;
-            //targetPos.x += moveSpeed;
         }
         else
         {
@@ -100,9 +100,12 @@ public class PlayerController : MonoBehaviour
 
             stepsTaken++;
 
-            if (stepsTaken > stepsNeededForBattle && Random.Range(1, 10000) <= 10)
+            if (stepsTaken > stepsNeededForBattle && Random.Range(1, 10000) <= 1000)
             {
                 Debug.Log("Encountered an enemy");
+                isMoving = false;
+                animator.SetBool("isMoving", false);
+                OnEncountered();
                 stepsTaken = 0;
             }
         }
