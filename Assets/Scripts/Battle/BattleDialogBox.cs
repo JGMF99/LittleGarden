@@ -115,8 +115,8 @@ public class BattleDialogBox : MonoBehaviour
 
     public void SetEnemyImages(List<BattleUnit> enemies)
     {
-
-        for (int i = 0; i < enemyImages.Count; i++)
+        Debug.Log(enemies.Count);
+        for (int i = 0; i < 4; i++)
         {
             if(i < enemies.Count)
                 enemyImages[i].SetupMenu(enemies[i].Character);

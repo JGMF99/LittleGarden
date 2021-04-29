@@ -57,7 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Characters\SkillBase.cs" />
+    <Compile Include="Assets\Scripts\Characters\CharacterParty.cs" />
+    <Compile Include="Assets\Scripts\Battle\EnemyParty.cs" />
     <Compile Include="Assets\Scripts\Characters\Skill.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\MapArea.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleSystem.cs" />
     <Compile Include="Assets\Scripts\Characters\Character.cs" />
     <Compile Include="Assets\Scripts\Battle\HPBar.cs" />
@@ -66,10 +69,6 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleDialogBox.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\Battle\BattleHud.cs" />
-    <Compile Include="Assets\Scripts\Characters\CharacterParty.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\MapArea.cs" />
-    <Compile Include="Assets\Scripts\Battle\EnemyParty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

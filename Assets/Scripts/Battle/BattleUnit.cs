@@ -8,9 +8,16 @@ public class BattleUnit : MonoBehaviour
 
 
     [SerializeField] bool isPlayerUnit;
+    [SerializeField] HPBar hpBar;
 
     public Character Character{get; set; }
     public bool IsPlayerUnit { get => isPlayerUnit; set => isPlayerUnit = value; }
+
+    public void Reset()
+    {
+        GetComponent<Image>().color = Color.clear;
+        hpBar.gameObject.SetActive(false);
+    }
 
     public void Setup(Character character)
     {
@@ -20,10 +27,9 @@ public class BattleUnit : MonoBehaviour
 
             GetComponent<Image>().sprite = Character.Base.SideSprite;
             GetComponent<Image>().color = Color.white;
-        }
-        else
-        {
-            GetComponent<Image>().color = Color.clear;
+
+            hpBar.gameObject.SetActive(true);
+            UpdateHP();
         }
         
     }
@@ -35,10 +41,12 @@ public class BattleUnit : MonoBehaviour
             Character = character;
 
             GetComponent<Image>().sprite = Character.Base.FrontSprite;
+            this.gameObject.SetActive(true);
+            //GetComponent<Image>().color = Color.white;
         }
         else
         {
-            GetComponent<Image>().color = Color.clear;
+            this.gameObject.SetActive(false);
         }
 
     }
@@ -46,5 +54,11 @@ public class BattleUnit : MonoBehaviour
     public void BattleUnitDied()
     {
         GetComponent<Image>().color = Color.clear;
+        hpBar.gameObject.SetActive(false);
+    }
+
+    public void UpdateHP()
+    {
+        hpBar.SetHP((float)Character.HP / Character.MaxHp);
     }
 }

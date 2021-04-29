@@ -14,8 +14,6 @@ public class BattleSystem : MonoBehaviour
 {
 
     
-    [SerializeField] BattleHud playerHud;
-
     BattleUnit playerUnit;
     [SerializeField] List<BattleUnit> playerGrid;
     BattleUnit enemyUnit;
@@ -49,6 +47,12 @@ public class BattleSystem : MonoBehaviour
     public IEnumerator SetupBattle()
     {
 
+        foreach (var p in playerGrid)
+            p.Reset();
+        foreach (var e in enemyGrid)
+            e.Reset();
+
+
         playerUnits = new List<BattleUnit>();
         enemyUnits = new List<BattleUnit>();
         turnsQueue = new List<BattleUnit>();
@@ -62,7 +66,6 @@ public class BattleSystem : MonoBehaviour
         }
 
         //TODO - Player stats
-        playerHud.SetData(playerUnits[0].Character);
 
         foreach (var e in enemies.Team)
         {
@@ -106,14 +109,12 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PlayerAction;
 
         dialogBox.EnableActionSelector(true);
-        dialogBox.EnablePlayerHud(true);
     }
 
     void PlayerSkill()
     {
         state = BattleState.PlayerSkill;
         dialogBox.EnableActionSelector(false);
-        dialogBox.EnablePlayerHud(false);
         dialogBox.EnableSkillSelector(true);
         dialogBox.EnableSkillDetails(true);
     }
@@ -135,6 +136,8 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         bool isFainted = enemyUnit.Character.TakeDamage(skill, playerUnit.Character);
+
+        enemyUnit.UpdateHP();
 
         if (isFainted)
         {
@@ -174,7 +177,7 @@ public class BattleSystem : MonoBehaviour
 
         bool isFainted = playerUnitAttacked.Character.TakeDamage(skill, enemyUnit.Character);
 
-        playerHud.UpdateHP();
+        playerUnitAttacked.UpdateHP();
 
         if (isFainted)
         {
