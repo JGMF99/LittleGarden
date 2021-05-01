@@ -115,7 +115,7 @@ public class BattleDialogBox : MonoBehaviour
 
     public void SetEnemyImages(List<BattleUnit> enemies)
     {
-        Debug.Log(enemies.Count);
+
         for (int i = 0; i < 4; i++)
         {
             if(i < enemies.Count)

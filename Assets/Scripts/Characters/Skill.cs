@@ -8,6 +8,8 @@ public class Skill
     public SkillBase Base { get; set; }
     public int TurnsCooldown { get ; set; }
 
+    public bool IsBackRow { get; set; }
+
     public Skill(SkillBase cBase)
     {
         Base = cBase;

@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public enum BattleState
 {
-    Start, PlayerAction, PlayerSkill, TargetEnemy, EnemyMove, Busy
+    Start, PlayerAction, PlayerSkill, TargetEnemy, PlayerPosition, EnemyMove, Busy
 }
 
 public class BattleSystem : MonoBehaviour
@@ -28,6 +29,7 @@ public class BattleSystem : MonoBehaviour
     int currentAction;
     int currentSkill;
     int currentTarget;
+    int currentPosition;
 
     CharacterParty team;
     EnemyParty enemies;
@@ -109,6 +111,8 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PlayerAction;
 
         dialogBox.EnableActionSelector(true);
+
+        currentAction = 0;
     }
 
     void PlayerSkill()
@@ -117,6 +121,21 @@ public class BattleSystem : MonoBehaviour
         dialogBox.EnableActionSelector(false);
         dialogBox.EnableSkillSelector(true);
         dialogBox.EnableSkillDetails(true);
+
+        currentSkill = 0;
+    }
+
+    void RunAway()
+    {
+        state = BattleState.Busy;
+
+        var runSuccessful = Random.Range(0, 101) < 80;
+
+        if (runSuccessful)
+            OnBattleOver(false);
+        else
+            DecideNextTurn();
+
     }
 
     void TargetEnemy()
@@ -125,13 +144,25 @@ public class BattleSystem : MonoBehaviour
 
         dialogBox.EnableSkillDetails(false);
         dialogBox.EnableEnemySelector(true);
+
+        currentTarget = 0;
+    }
+
+    void PlayerPosition()
+    {
+        state = BattleState.PlayerPosition;
+
+        if (playerUnit.Character.Position != 0)
+            currentPosition = 0;
+        else
+            currentPosition = 1;
     }
 
     IEnumerator PerformPlayerSkill()
     {
         state = BattleState.Busy;
 
-        var skill = playerUnits[0].Character.Skills[currentSkill];
+        var skill = playerUnit.Character.Skills[currentSkill];
 
         yield return new WaitForSeconds(1f);
 
@@ -187,6 +218,7 @@ public class BattleSystem : MonoBehaviour
             turnsQueue.Remove(playerUnitAttacked);
             playerGrid[playerUnitAttacked.Character.Position].BattleUnitDied();
 
+            team.Team.Remove(playerUnitAttacked.Character); //Character dies forever
         }
 
 
@@ -201,6 +233,52 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+
+
+    public List<BattleUnit> Swap(List<BattleUnit> list, int indexA, int indexB)
+    {
+        var tmp = list[indexA];
+        list[indexA] = list[indexB];
+        list[indexB] = tmp;
+        return list;
+    }
+
+
+    IEnumerator SwitchPositions()
+    {
+        state = BattleState.Busy;
+
+        var oldPosition = playerUnit.Character.Position;
+
+        playerGrid[oldPosition].Swap(playerGrid[currentPosition], currentPosition);
+
+        foreach (var pu in playerGrid)
+        {
+            pu.Setup(pu.Character);
+        }
+
+        if (playerGrid[oldPosition].Character == null)
+        {
+            playerUnits.Remove(playerGrid[oldPosition]);
+            playerUnits.Add(playerGrid[currentPosition]);
+
+            turnsQueue.Remove(playerGrid[oldPosition]);
+            turnsQueue.Add(playerGrid[currentPosition]);
+
+        }
+        else
+        {
+            turnsQueue = Swap(turnsQueue, turnsQueue.IndexOf(playerGrid[currentPosition]), turnsQueue.IndexOf(playerGrid[oldPosition]));
+        }
+
+
+        yield return new WaitForSeconds(1f);
+
+        DecideNextTurn();
+    }
+
+    
+
     public void HandleUpdate()
     {
         if(state == BattleState.PlayerAction)
@@ -213,6 +291,9 @@ public class BattleSystem : MonoBehaviour
         else if (state == BattleState.TargetEnemy)
         {
             HandleTargetEnemy();
+        }else if(state == BattleState.PlayerPosition)
+        {
+            HandlePlayerPosition();
         }
     }
 
@@ -247,15 +328,15 @@ public class BattleSystem : MonoBehaviour
                 PlayerSkill();
             }
             else if(currentAction == 1){
-                //Items
+                PlayerPosition();
             }
             else if (currentAction == 2)
             {
-                //Position
+                //Items
             }
             else if (currentAction == 3)
             {
-                //Run
+                RunAway();
             }
         }
     }
@@ -284,10 +365,8 @@ public class BattleSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             
-
             TargetEnemy();
 
-            //StartCoroutine(PerformPlayerSkill());
         }
     }
 
@@ -314,5 +393,63 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(PerformPlayerSkill());
         }
 
+    }
+
+    void HandlePlayerPosition()
+    {
+
+        if (Input.GetKeyDown(KeyCode.D) && currentPosition < playerGrid.Count - 1 && currentPosition + 1 != playerUnit.Character.Position)
+        {
+            ++currentPosition;
+        }
+        else if (Input.GetKeyDown(KeyCode.A) && currentPosition > 0 && currentPosition - 1 != playerUnit.Character.Position)
+        {
+            --currentPosition;
+        }
+        else if (Input.GetKeyDown(KeyCode.S) && currentPosition < playerGrid.Count - 2)
+        {
+            if(currentPosition + 2 == playerUnit.Character.Position)
+            {
+                if(currentPosition + 2 < playerGrid.Count)
+                    currentPosition += 4;
+            }else
+                currentPosition += 2;
+        }
+        else if (Input.GetKeyDown(KeyCode.W) && currentPosition > 1)
+        {
+            if (currentPosition - 2 == playerUnit.Character.Position)
+            {
+                if (currentPosition - 2 > 0)
+                    currentPosition -= 4;
+            }
+            else
+                currentPosition -= 2;
+
+        }
+
+        UpdatePlayerPositionSelection();
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+
+            StartCoroutine(SwitchPositions());
+
+        }
+    }
+
+    private void UpdatePlayerPositionSelection()
+    {
+        for(var i = 0; i < playerGrid.Count; i++)
+        {
+            if (i == currentPosition)
+                playerGrid[i].GetComponent<Image>().color = new Color(0, 1, 0, 0.5f);
+            else if(i == playerUnit.Character.Position)
+                playerGrid[i].GetComponent<Image>().color = new Color(1, 0, 0, 0.5f);
+            else if(playerGrid[i].Character != null)
+                playerGrid[i].GetComponent<Image>().color = Color.white;
+            else
+                playerGrid[i].GetComponent<Image>().color = Color.clear;
+
+        }
     }
 }

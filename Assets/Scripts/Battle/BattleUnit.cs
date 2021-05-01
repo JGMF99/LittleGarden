@@ -15,8 +15,10 @@ public class BattleUnit : MonoBehaviour
 
     public void Reset()
     {
+        GetComponent<Image>().sprite = null;
         GetComponent<Image>().color = Color.clear;
         hpBar.gameObject.SetActive(false);
+        Character = null;
     }
 
     public void Setup(Character character)
@@ -30,6 +32,10 @@ public class BattleUnit : MonoBehaviour
 
             hpBar.gameObject.SetActive(true);
             UpdateHP();
+        }
+        else
+        {
+            GetComponent<Image>().color = Color.clear;
         }
         
     }
@@ -60,5 +66,30 @@ public class BattleUnit : MonoBehaviour
     public void UpdateHP()
     {
         hpBar.SetHP((float)Character.HP / Character.MaxHp);
+    }
+
+    public void Swap(BattleUnit bu, int newPosition)
+    {
+        if(bu.Character == null)
+        {
+            Character.Position = newPosition;
+            bu.Setup(Character);
+            Reset();
+        }
+        else
+        {
+            var temp = Character;
+
+            Character = bu.Character;
+            bu.Character = temp;
+
+            Character.Position = bu.Character.Position;
+            bu.Character.Position = newPosition;
+
+            Setup(Character);
+            bu.Setup(bu.Character);
+
+        }  
+
     }
 }

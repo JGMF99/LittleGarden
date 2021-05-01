@@ -66,7 +66,17 @@ public class Character
         float d = a * skill.Base.Damage * ((float)attacker.Attack / Defense) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
 
-        HP -= damage;
+        //Take less damage on back row
+        if(Position % 2 == 0)
+        {
+            HP -= damage/2;
+        }
+        else
+        {
+            HP -= damage;
+        }
+
+        
         if(HP <= 0)
         {
             HP = 0;
