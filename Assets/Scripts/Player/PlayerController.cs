@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("moveX", input.x);
             animator.SetFloat("moveY", input.y);
 
-            targetPos += moveSpeed * input;
+            targetPos += moveSpeed * input * Time.deltaTime;
 
             if(isWalkable(targetPos))
                 transform.position = targetPos;
