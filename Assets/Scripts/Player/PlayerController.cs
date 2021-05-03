@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 
     public float moveSpeed;
     public LayerMask solidObjetsLayer;
+    public LayerMask interactableLayer;
     public LayerMask dangerZoneLayer;
 
     public event Action OnEncountered;
@@ -80,12 +81,29 @@ public class PlayerController : MonoBehaviour
 
         animator.SetBool("isMoving", isMoving);
 
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Interact();
+        }
+
+    }
+
+    private void Interact()
+    {
+        var facingDir = new Vector3(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
+        var interactPos = transform.position + facingDir;
+
+       var collider = Physics2D.OverlapCircle(interactPos, 0.3f, interactableLayer);
+        if(collider != null)
+        {
+            collider.GetComponent<Interactable>()?.Interact();
+        }
     }
 
     private bool isWalkable(Vector3 targetPos)
     {
 
-        if (Physics2D.OverlapBox(targetPos, new Vector2(0.8f,0.8f), 90, solidObjetsLayer) != null)
+        if (Physics2D.OverlapBox(targetPos, new Vector2(0.8f,0.8f), 90, solidObjetsLayer | interactableLayer) != null)
         {
             return false;
         }
