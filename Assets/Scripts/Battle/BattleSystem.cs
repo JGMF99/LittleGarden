@@ -34,6 +34,9 @@ public class BattleSystem : MonoBehaviour
     CharacterParty team;
     EnemyParty enemies;
 
+    BattleUnit nextTurn;
+    int alphaCheck = 0;
+
     List<BattleUnit> playerUnits;
     List<BattleUnit> enemyUnits;
     List<BattleUnit> turnsQueue;
@@ -87,7 +90,7 @@ public class BattleSystem : MonoBehaviour
 
     void DecideNextTurn()
     {
-        var nextTurn = turnsQueue[0];
+        nextTurn = turnsQueue[0];
 
         turnsQueue.Remove(nextTurn);
         turnsQueue.Add(nextTurn);
@@ -202,7 +205,7 @@ public class BattleSystem : MonoBehaviour
 
         var skill = enemyUnit.Character.GetRandomSkill();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         var playerUnitAttacked = playerUnits[Random.Range(0, playerUnits.Count)];
 
@@ -281,6 +284,12 @@ public class BattleSystem : MonoBehaviour
 
     public void HandleUpdate()
     {
+
+        if(nextTurn != null)
+        {
+            HighlightCharacter();
+        }
+
         if(state == BattleState.PlayerAction)
         {
             HandleActionSelection();
@@ -295,9 +304,27 @@ public class BattleSystem : MonoBehaviour
         {
             HandlePlayerPosition();
         }
+
     }
 
- 
+    private void HighlightCharacter()
+    {
+        foreach (var bu in turnsQueue)
+        {
+            if (bu.Equals(nextTurn))
+            {
+                Color temp = bu.GetComponent<Image>().color;
+                if (temp.a <= 0.4)
+                    alphaCheck = 1;
+                else if (temp.a >= 1)
+                    alphaCheck = -1;
+                temp.a += alphaCheck * Time.deltaTime;
+                nextTurn.GetComponent<Image>().color = temp;
+            }
+            else
+                bu.GetComponent<Image>().color = Color.white;
+        }
+    }
 
     void HandleActionSelection()
     {
@@ -372,7 +399,7 @@ public class BattleSystem : MonoBehaviour
 
     void HandleTargetEnemy()
     {
-        if (Input.GetKeyDown(KeyCode.D) && currentTarget < enemies.Team.Count - 1)
+        if (Input.GetKeyDown(KeyCode.D) && currentTarget < enemyUnits.Count - 1)
         {
             ++currentTarget;
         }
@@ -382,17 +409,34 @@ public class BattleSystem : MonoBehaviour
         }
 
         dialogBox.UpdateEnemySelection(currentTarget);
+        UpdateEnemySelection(currentTarget);
 
         if (Input.GetKeyDown(KeyCode.E))
         {
             dialogBox.EnableSkillSelector(false);
             dialogBox.EnableEnemySelector(false);
 
-            enemyUnit = enemyUnits.Where(x => x.Character == dialogBox.EnemyImages[currentTarget].Character).FirstOrDefault();
+            enemyUnit = enemyUnits[currentTarget];
 
             StartCoroutine(PerformPlayerSkill());
         }
 
+    }
+
+    private void UpdateEnemySelection(int currentTarget)
+    {
+        for(int i = 0; i < enemyUnits.Count; i++)
+        {
+            if(i == currentTarget)
+            {
+                enemyGrid.Where(x => x.Character == enemyUnits[i].Character).FirstOrDefault().GetComponent<Image>().color = new Color(1f, 0, 0, 0.5f);
+                Debug.Log(enemyGrid.Where(x => x.Character == enemyUnits[currentTarget].Character).FirstOrDefault().GetComponent<Image>().color);
+            }
+            else
+            {
+                enemyGrid.Where(x => x.Character == enemyUnits[i].Character).FirstOrDefault().GetComponent<Image>().color = new Color(1, 1, 1, 1f);
+            }
+        }
     }
 
     void HandlePlayerPosition()

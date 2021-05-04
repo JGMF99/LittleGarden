@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MapArea : MonoBehaviour
@@ -29,6 +30,8 @@ public class MapArea : MonoBehaviour
             enemyParty.Team.Add(enemy);
             enemyParty.Team[i].Init();
         }
+
+        enemyParty.Team = enemyParty.Team.OrderBy(o => o.Position).ToList();
 
         return enemyParty;
     }

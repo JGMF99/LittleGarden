@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
 
-    private int stepsTaken = 0;
+    private double stepsTaken = 0;
     public int stepsNeededForBattle = 10000;
 
     private bool isMoving;
@@ -116,7 +116,9 @@ public class PlayerController : MonoBehaviour
         if (Physics2D.OverlapCircle(transform.position, 0.2f, dangerZoneLayer) != null)
         {
 
-            stepsTaken++;
+            stepsTaken += Time.deltaTime;
+
+            Debug.Log(stepsTaken);
 
             if (stepsTaken > stepsNeededForBattle && Random.Range(1, 10000) <= 1000)
             {
