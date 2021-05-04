@@ -40,22 +40,22 @@ public class PlayerController : MonoBehaviour
         Vector3 input = new Vector3(0, 0);
         isMoving = true;
 
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             input.x = 0;
             input.y = 1;
         }
-        else if (Input.GetKey(KeyCode.A))
+        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             input.x = -1;
             input.y = 0;
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             input.x = 0;
             input.y = -1;
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             input.x = 1;
             input.y = 0;
@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
 
         animator.SetBool("isMoving", isMoving);
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKey(KeyCode.M))
         {
             Interact();
         }
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     private bool isWalkable(Vector3 targetPos)
     {
 
-        if (Physics2D.OverlapBox(targetPos, new Vector2(0.8f,0.8f), 90, solidObjetsLayer | interactableLayer) != null)
+        if (Physics2D.OverlapCircle(targetPos, 0.2f, solidObjetsLayer | interactableLayer) != null)
         {
             return false;
         }
