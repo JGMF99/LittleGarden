@@ -86,6 +86,11 @@ public class PlayerController : MonoBehaviour
             Interact();
         }
 
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            InventoryUI.Instance.Open();
+        }
+
     }
 
     private void Interact()
