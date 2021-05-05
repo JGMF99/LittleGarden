@@ -348,7 +348,7 @@ public class BattleSystem : MonoBehaviour
 
         dialogBox.UpdateActionSelection(currentAction);
 
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKey(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
             if(currentAction == 0)
             {
@@ -389,7 +389,7 @@ public class BattleSystem : MonoBehaviour
 
         dialogBox.UpdateSkillSelection(currentSkill, playerUnit.Character.Skills[currentSkill]);
 
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKey(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
             
             TargetEnemy();
@@ -411,7 +411,7 @@ public class BattleSystem : MonoBehaviour
         dialogBox.UpdateEnemySelection(currentTarget);
         UpdateEnemySelection(currentTarget);
 
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKey(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
             dialogBox.EnableSkillSelector(false);
             dialogBox.EnableEnemySelector(false);
@@ -473,7 +473,7 @@ public class BattleSystem : MonoBehaviour
 
         UpdatePlayerPositionSelection();
 
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKey(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
 
             StartCoroutine(SwitchPositions());

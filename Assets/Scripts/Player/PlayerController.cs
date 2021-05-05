@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
 
         animator.SetBool("isMoving", isMoving);
 
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKey(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
             Interact();
         }
@@ -122,8 +122,6 @@ public class PlayerController : MonoBehaviour
         {
 
             stepsTaken += Time.deltaTime;
-
-            Debug.Log(stepsTaken);
 
             if (stepsTaken > stepsNeededForBattle && Random.Range(1, 10000) <= 1000)
             {
