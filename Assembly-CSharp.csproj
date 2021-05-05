@@ -50,8 +50,10 @@
      <Compile Include="Assets\Scripts\Characters\SkillBase.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Interactable.cs" />
      <Compile Include="Assets\Scripts\Characters\CharacterParty.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\InventoryUI.cs" />
      <Compile Include="Assets\Scripts\Player\NPCController.cs" />
      <Compile Include="Assets\Scripts\Battle\EnemyParty.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Inventory.cs" />
      <Compile Include="Assets\Scripts\Characters\Skill.cs" />
      <Compile Include="Assets\Scripts\Gameplay\MapArea.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Dialog.cs" />
@@ -62,6 +64,7 @@
      <Compile Include="Assets\Scripts\Characters\CharactersBase.cs" />
      <Compile Include="Assets\Scripts\Gameplay\DialogManager.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Item.cs" />
      <Compile Include="Assets\Scripts\Battle\BattleDialogBox.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
  <Reference Include="UnityEngine">
