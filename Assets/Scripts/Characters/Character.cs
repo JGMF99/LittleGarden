@@ -8,7 +8,12 @@ public class Character
 
     [SerializeField] CharactersBase _base;
     [SerializeField] int level;
+    [SerializeField] int xp;
     [SerializeField] int position;
+
+    private Item helmet;
+    private Item chestplate;
+    private Item trinket;
 
     public int HP { get; set; }
     
@@ -41,12 +46,14 @@ public class Character
 
     public int Attack
     {
-        get { return Mathf.FloorToInt((_base.Attack * level) / 100f) + 5; }
+        get { return Mathf.FloorToInt((_base.Attack * level) / 100f) + 5 + AttackEquipment(); }
     }
+
+    
 
     public int Defense
     {
-        get { return Mathf.FloorToInt((_base.Defense * level) / 100f) + 5; }
+        get { return Mathf.FloorToInt((_base.Defense * level) / 100f) + 5 + DefenseEquipment(); }
     }
 
     public int Speed
@@ -57,6 +64,10 @@ public class Character
     public CharactersBase Base { get => _base; set => _base = value; }
     public int Level { get => level; set => level = value; }
     public int Position { get => position; set => position = value; }
+    public int Xp { get => xp; set => xp = value; }
+    public Item Helmet { get => helmet; set => helmet = value; }
+    public Item Chestplate { get => chestplate; set => chestplate = value; }
+    public Item Trinket { get => trinket; set => trinket = value; }
 
     public bool TakeDamage(Skill skill, Character attacker)
     {
@@ -93,4 +104,76 @@ public class Character
         return Skills[r];
     }
 
+    internal void ChangeHelmet(Item item)
+    {
+        Helmet = item;
+    }
+
+    internal void ChangeChestplate(Item item)
+    {
+        Chestplate = item;
+    }
+
+    internal void ChangeTrinket(Item item)
+    {
+        trinket = item;
+    }
+
+    private int AttackEquipment()
+    {
+        return GetHelmetAttack() + GetChestplateAttack() + GetTrinketAttack();
+    }
+
+    private int DefenseEquipment()
+    {
+        return GetHelmetDefense() + GetChestplateDefense() + GetTrinketDefense();
+    }
+
+    private int GetHelmetDefense()
+    {
+        if (Helmet != null)
+            return Helmet.Base.DefMod;
+        else
+            return 0;
+    }
+
+    private int GetHelmetAttack()
+    {
+        if (Helmet != null)
+            return Helmet.Base.AttackMod;
+        else
+            return 0;
+    }
+
+    private int GetChestplateDefense()
+    {
+        if (Chestplate != null)
+            return Chestplate.Base.DefMod;
+        else
+            return 0;
+    }
+
+    private int GetChestplateAttack()
+    {
+        if (Chestplate != null)
+            return Chestplate.Base.AttackMod;
+        else
+            return 0;
+    }
+
+    private int GetTrinketDefense()
+    {
+        if (Trinket != null)
+            return Trinket.Base.DefMod;
+        else
+            return 0;
+    }
+
+    private int GetTrinketAttack()
+    {
+        if (Trinket != null)
+            return Trinket.Base.AttackMod;
+        else
+            return 0;
+    }
 }

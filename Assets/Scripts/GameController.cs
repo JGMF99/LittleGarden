@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum GameState { FreeRoam, Battle, Dialog}
+public enum GameState { FreeRoam, Battle, Dialog, Inventory}
 public class GameController : MonoBehaviour
 {
 
@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour
     {
         playerController.OnEncountered += StartBattle;
         battleSystem.OnBattleOver += EndBattle;
+
+        playerController.OnInventoryOpen += OpenInventory;
 
         DialogManager.Instance.OnShowDialog += () =>
         {
@@ -54,12 +56,26 @@ public class GameController : MonoBehaviour
         worldCamera.gameObject.SetActive(true);
     }
 
+    private void OpenInventory()
+    {
+        var team = playerController.GetComponent<CharacterParty>();
+        var items = playerController.Items;
+
+        bool isOpen = InventoryUI.Instance.Open(team,items);
+
+        if (isOpen)
+            state = GameState.Inventory;
+        else
+            state = GameState.FreeRoam;
+    }
+
     private void Update()
     {
         
         if(state == GameState.FreeRoam)
         {
             playerController.HandleUpdate();
+
         }
         else if(state == GameState.Battle)
         {
@@ -68,6 +84,12 @@ public class GameController : MonoBehaviour
         else if (state == GameState.Dialog)
         {
             DialogManager.Instance.HandleUpdate();
+        }else if(state == GameState.Inventory)
+        {
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                OpenInventory();
+            }
         }
     }
 

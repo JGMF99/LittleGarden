@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,16 +14,25 @@ public class InventoryUI : MonoBehaviour
 
     [SerializeField] GameObject Inventory;
 
-    public void Open()
+    [SerializeField] Inventory teamInventory;
+
+    public bool Open(CharacterParty team, List<Item> playerItems)
     {
-        if (!Inventory.active)
+        if (!Inventory.activeSelf)
         {
+
+            
+            teamInventory.Setup(team, playerItems);
+
             Inventory.SetActive(true);
+            return true;
         }
         else
         {
             Inventory.SetActive(false);
+            return false;
         }
        
     }
+
 }

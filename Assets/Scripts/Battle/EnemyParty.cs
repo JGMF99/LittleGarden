@@ -15,7 +15,7 @@ public class EnemyParty
         return team.Where(x => x.Position == position).FirstOrDefault();
     }
 
-    public string ToString()
+    public new string ToString()
     {
         var s = "";
         foreach (var c in Team)
