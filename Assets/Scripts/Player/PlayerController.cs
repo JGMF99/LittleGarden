@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask dangerZoneLayer;
 
     public event Action OnEncountered;
+    public event Action OnInventoryOpen;
 
     private Animator animator;
 
@@ -20,6 +21,10 @@ public class PlayerController : MonoBehaviour
     public int stepsNeededForBattle = 10000;
 
     private bool isMoving;
+
+    public List<Item> items;
+
+    public List<Item> Items { get => items; set => items = value; }
 
     private void Awake()
     {
@@ -88,7 +93,7 @@ public class PlayerController : MonoBehaviour
 
         else if (Input.GetKeyDown(KeyCode.I))
         {
-            InventoryUI.Instance.Open();
+            OnInventoryOpen();
         }
 
     }
