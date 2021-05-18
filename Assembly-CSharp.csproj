@@ -64,7 +64,10 @@
     <Compile Include="Assets\Scripts\Player\NPCController.cs" />
     <Compile Include="Assets\Scripts\Battle\EnemyParty.cs" />
     <Compile Include="Assets\Scripts\Inventory\Inventory.cs" />
+    <Compile Include="Assets\Scripts\Inventory\CharacterEquipment.cs" />
+    <Compile Include="Assets\Scripts\Inventory\EquipmentMenu.cs" />
     <Compile Include="Assets\Scripts\Characters\Skill.cs" />
+    <Compile Include="Assets\Scripts\Inventory\ItemBase.cs" />
     <Compile Include="Assets\Scripts\Gameplay\MapArea.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Dialog.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleSystem.cs" />
@@ -81,9 +84,8 @@
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Inventory\ItemSlot.cs" />
     <Compile Include="Assets\Scripts\Inventory\PartyMember.cs" />
-    <Compile Include="Assets\Scripts\Inventory\EquipmentMenu.cs" />
-    <Compile Include="Assets\Scripts\Inventory\ItemBase.cs" />
-    <Compile Include="Assets\Scripts\Inventory\CharacterEquipment.cs" />
+    <Compile Include="Assets\Scripts\Inventory\BattlePosition.cs" />
+    <Compile Include="Assets\Scripts\Inventory\Position.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f4580966ba10d54bbfaa69572ea98bf, type: 3}
   m_Name: Chestplate
   m_EditorClassIdentifier: 
-  name: 
+  name: Chestplate
   description: 
-  sprite: {fileID: 0}
+  sprite: {fileID: 21300000, guid: 4cf5f7ec4681bd8448f0491b6bc04516, type: 3}
   healthRegen: 0
   attackMod: 0
-  defMod: 0
-  type: 0
+  defMod: 8
+  type: 1

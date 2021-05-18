@@ -15,14 +15,15 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] GameObject Inventory;
 
     [SerializeField] Inventory teamInventory;
+    [SerializeField] BattlePosition battlePosition;
 
     public bool Open(CharacterParty team, List<Item> playerItems)
     {
         if (!Inventory.activeSelf)
-        {
-
-            
+        {            
             teamInventory.Setup(team, playerItems);
+            Debug.Log(battlePosition);
+            battlePosition.Setup(team);
 
             Inventory.SetActive(true);
             return true;
