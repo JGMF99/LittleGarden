@@ -21,8 +21,10 @@ MonoBehaviour:
   attack: 10
   defense: 5
   speed: 70
+  expYield: 100
+  growthRate: 0
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: b556311db1353e84cb098d774ca8ce3e, type: 2}
     level: 1
   - skillBase: {fileID: 11400000, guid: 8b790eccafea138439f3c7816269dbe5, type: 2}
-    level: 1
+    level: 2

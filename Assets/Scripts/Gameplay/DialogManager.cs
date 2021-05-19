@@ -14,7 +14,9 @@ public class DialogManager : MonoBehaviour
     public event Action OnShowDialog;
     public event Action OnCloseDialog;
 
+    private QuestGiver quest;
     public static DialogManager Instance { get; private set; }
+    public QuestGiver Quest { get => quest; set => quest = value; }
 
     private void Awake()
     {
@@ -25,11 +27,14 @@ public class DialogManager : MonoBehaviour
     int currentLine = 0;
     bool isTyping;
 
-    public IEnumerator ShowDialog(Dialog dialog)
+    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg)
     {
         yield return new WaitForEndOfFrame();
 
         OnShowDialog?.Invoke();
+
+        if(qg.quest.questState == QuestState.notStarted)
+            Quest = qg;
 
         this.dialog = dialog;
         NPCFace.SetActive(true);

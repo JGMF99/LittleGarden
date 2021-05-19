@@ -8,6 +8,9 @@ public class NPCController : MonoBehaviour, Interactable
 
     public void Interact()
     {
-        StartCoroutine(DialogManager.Instance.ShowDialog(dialog));
+
+        QuestGiver qg = GetComponent<QuestGiver>();
+
+        StartCoroutine(DialogManager.Instance.ShowDialog(dialog, qg));
     }
 }

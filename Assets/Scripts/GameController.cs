@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum GameState { FreeRoam, Battle, Dialog, Inventory}
+public enum GameState { FreeRoam, Battle, Dialog, Inventory, PopUp}
 public class GameController : MonoBehaviour
 {
 
@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
     [SerializeField] BattleSystem battleSystem;
     [SerializeField] Camera worldCamera;
 
-    GameState state;
+    public GameState state;
 
     private void Start()
     {
@@ -30,7 +30,22 @@ public class GameController : MonoBehaviour
         {
             if (state == GameState.Dialog)
             {
-                state = GameState.FreeRoam;
+
+                if(DialogManager.Instance.Quest != null && DialogManager.Instance.Quest.quest.questState == QuestState.notStarted)
+                {
+                    DialogManager.Instance.Quest.OpenQuestWindow();
+
+                    DialogManager.Instance.Quest.OnQuestWindowClose += () =>
+                    {
+                        state = GameState.FreeRoam;
+                    };
+                }
+                else
+                {
+                    state = GameState.FreeRoam;
+                }
+
+                
             }
         };
     }
@@ -49,9 +64,12 @@ public class GameController : MonoBehaviour
         battleSystem.StartBattle(team,enemy);
     }
 
-    private void EndBattle(bool obj)
+    private void EndBattle(bool obj, EnemyParty enemies)
     {
         state = GameState.FreeRoam;
+
+        playerController.CheckKillQuests(enemies);
+
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
     }

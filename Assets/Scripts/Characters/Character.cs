@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -8,8 +9,8 @@ public class Character
 
     [SerializeField] CharactersBase _base;
     [SerializeField] int level;
-    [SerializeField] int xp;
     [SerializeField] int position;
+    private int xp;
 
     private Item helmet;
     private Item chestplate;
@@ -24,6 +25,8 @@ public class Character
     {
 
         HP = MaxHp;
+
+        Xp = Base.GetExpForLevel(Level);
 
         //Generate Moves
         Skills = new List<Skill>();
@@ -69,7 +72,28 @@ public class Character
     public Item Chestplate { get => chestplate; set => chestplate = value; }
     public Item Trinket { get => trinket; set => trinket = value; }
 
-    public bool TakeDamage(Skill skill, Character attacker)
+    public bool CheckForLevelUp()
+    {
+        if (Xp > Base.GetExpForLevel(Level + 1))
+        {
+            Level++;
+            return true;
+        }
+            
+        return false;
+    }
+
+    public LearnableSkill GetLearnableSkillAtCurrentLevel()
+    {
+        return Base.LearnableSkills.Where(x => x.Level == Level).FirstOrDefault();
+    }
+
+    public void LearnSkill(LearnableSkill skillToLearn)
+    {
+        Skills.Add(new Skill(skillToLearn.SkillBase));
+    }
+
+    public bool TakeDamage(Skill skill, Character attacker, bool isPlayerUnit)
     {
 
         float modifiers = Random.Range(0.85f, 1f);
@@ -78,7 +102,7 @@ public class Character
         int damage = Mathf.FloorToInt(d * modifiers);
 
         //Take less damage on back row
-        if(Position % 2 == 0)
+        if( ( Position % 2 == 0 && isPlayerUnit ) ||  (Position % 2 == 1 && !isPlayerUnit))
         {
             HP -= damage/2;
         }

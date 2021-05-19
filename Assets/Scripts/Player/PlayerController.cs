@@ -7,6 +7,9 @@ using Random = UnityEngine.Random;
 public class PlayerController : MonoBehaviour
 {
 
+    [SerializeField] GameController gameController;
+    [SerializeField] QuestCompleted questCompleted;
+
     public float moveSpeed;
     public LayerMask solidObjetsLayer;
     public LayerMask interactableLayer;
@@ -24,7 +27,12 @@ public class PlayerController : MonoBehaviour
 
     public List<Item> items;
 
+    private List<Quest> quests = new List<Quest>();
+
+    private int money = 0;
+
     public List<Item> Items { get => items; set => items = value; }
+    public List<Quest> Quests { get => quests; set => quests = value; }
 
     private void Awake()
     {
@@ -95,6 +103,57 @@ public class PlayerController : MonoBehaviour
         {
             OnInventoryOpen();
         }
+
+    }
+
+    internal void CheckKillQuests(EnemyParty enemies)
+    {
+        foreach(Quest q in quests)
+            if (q.questState == QuestState.OnGoing)
+            {
+                foreach (Character c in enemies.Team)
+                    if (c.HP <= 0)
+                        q.goal.EnemyKilled(c.Base);
+
+                if (q.goal.IsReached())
+                {
+                    q.Complete();
+
+                    //Money reward
+                    money += q.moneyReward;
+
+                    //Experience reward
+                    foreach(Character c in GetComponent<CharacterParty>().Team)
+                    {
+                        //Exp gain
+                        int expGain = Mathf.FloorToInt(q.experienceReward);
+                        c.Xp += expGain;
+
+                        //Check level up
+                        while (c.CheckForLevelUp())
+                        {
+                            var newSkill = c.GetLearnableSkillAtCurrentLevel();
+
+                            if (newSkill != null)
+                                c.LearnSkill(newSkill);
+                        }
+                        
+                    }
+
+                    //Item reward
+                    foreach (var i in q.itemsReward)
+                    {
+                        items.Add(i);
+                    }
+
+                    questCompleted.CompletedQuest(q);
+
+                    gameController.state = GameState.PopUp;
+
+                    questCompleted.OkBtn.onClick.AddListener(() => gameController.state = GameState.FreeRoam);
+                }
+            }
+                
 
     }
 

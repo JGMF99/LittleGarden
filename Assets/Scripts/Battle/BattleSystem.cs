@@ -22,7 +22,7 @@ public class BattleSystem : MonoBehaviour
 
     [SerializeField] BattleDialogBox dialogBox;
 
-    public event Action<bool> OnBattleOver;
+    public event Action<bool, EnemyParty> OnBattleOver;
 
     BattleState state;
 
@@ -135,7 +135,7 @@ public class BattleSystem : MonoBehaviour
         var runSuccessful = Random.Range(0, 101) < 80;
 
         if (runSuccessful)
-            OnBattleOver(false);
+            OnBattleOver(false, enemies);
         else
             DecideNextTurn();
 
@@ -169,7 +169,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        bool isFainted = enemyUnit.Character.TakeDamage(skill, playerUnit.Character);
+        bool isFainted = enemyUnit.Character.TakeDamage(skill, playerUnit.Character, false);
 
         enemyUnit.UpdateHP();
 
@@ -179,6 +179,27 @@ public class BattleSystem : MonoBehaviour
 
             yield return new WaitForSeconds(2f);
 
+            //Exp gain
+            int expYield = enemyUnit.Character.Base.ExpYield;
+            int enemyLevel = enemyUnit.Character.Level;
+
+            int expGain = Mathf.FloorToInt(expYield * enemyLevel / 7);
+            foreach (BattleUnit bu in playerUnits)
+                bu.Character.Xp += expGain;
+
+            //Check level up
+            foreach(BattleUnit bu in playerUnits)
+            {
+                while (bu.Character.CheckForLevelUp())
+                {
+                    var newSkill = bu.Character.GetLearnableSkillAtCurrentLevel();
+
+                    if (newSkill != null)
+                        bu.Character.LearnSkill(newSkill);
+                }
+            }
+                
+
             enemyUnits.Remove(enemyUnit);
             turnsQueue.Remove(enemyUnit);
             enemyGrid[enemyUnit.Character.Position].BattleUnitDied();
@@ -187,7 +208,7 @@ public class BattleSystem : MonoBehaviour
 
         if (enemyUnits.Count == 0)
         {
-            OnBattleOver(true);
+            OnBattleOver(true, enemies);
         }
 
         else
@@ -209,7 +230,7 @@ public class BattleSystem : MonoBehaviour
 
         var playerUnitAttacked = playerUnits[Random.Range(0, playerUnits.Count)];
 
-        bool isFainted = playerUnitAttacked.Character.TakeDamage(skill, enemyUnit.Character);
+        bool isFainted = playerUnitAttacked.Character.TakeDamage(skill, enemyUnit.Character, true);
 
         playerUnitAttacked.UpdateHP();
 
@@ -227,7 +248,7 @@ public class BattleSystem : MonoBehaviour
 
         if (playerUnits.Count == 0)
         {
-            OnBattleOver(false);
+            OnBattleOver(false, enemies);
         }
 
         else
@@ -430,7 +451,6 @@ public class BattleSystem : MonoBehaviour
             if(i == currentTarget)
             {
                 enemyGrid.Where(x => x.Character == enemyUnits[i].Character).FirstOrDefault().GetComponent<Image>().color = new Color(1f, 0, 0, 0.5f);
-                Debug.Log(enemyGrid.Where(x => x.Character == enemyUnits[currentTarget].Character).FirstOrDefault().GetComponent<Image>().color);
             }
             else
             {
