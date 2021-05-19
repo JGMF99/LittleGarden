@@ -9,18 +9,25 @@ public class Position : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 {
 
     [SerializeField] Canvas canvas;
+    [SerializeField] Color color;
+    [SerializeField] GameObject tmpGameObject;
+
+    private bool dragStarted;
 
     private int position;
     private Character character;
 
     private Vector2 initPosition;
-
-    private bool droppedOnSlot;
+    private Vector2 tmpPosition;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
 
+    public event Action<Position> OnDragStart;
+    public event Action OnDragEnd;
+
     public Character Character { get => character; set => character = value; }
+    public Color Color { get => color; set => color = value; }
 
     private void Awake()
     {
@@ -49,19 +56,36 @@ public class Position : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        dragStarted = false;
         if (Character != null)
         {
             Debug.Log("OnBeginDrag");
             initPosition = rectTransform.anchoredPosition;
-            canvasGroup.alpha = .6f;
+
+            canvasGroup.alpha = .9f;
             canvasGroup.blocksRaycasts = false;
-            droppedOnSlot = false;
+
+            int tmpSiblingIndex = transform.GetSiblingIndex();
+            transform.SetSiblingIndex(tmpGameObject.transform.GetSiblingIndex());
+            tmpGameObject.transform.SetSiblingIndex(tmpSiblingIndex);
+
+            tmpPosition = initPosition;
+            rectTransform.anchoredPosition = tmpPosition;
+
+            dragStarted = true;
+
+            OnDragStart(this);
         }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        if(Character != null)
+        {
+            tmpPosition += eventData.delta / canvas.scaleFactor;
+            rectTransform.anchoredPosition = tmpPosition;
+        }
+            
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -84,7 +108,7 @@ public class Position : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
                     Setup(droppedCharacter.Character, position);
                     droppedCharacter.Setup(null, droppedCharacter.position);
                 }
-                else
+                else if(droppedCharacter.Character != null)
                 {
                     int oldPositon = droppedCharacter.Character.Position;
                     droppedCharacter.Character.Position = character.Position;
@@ -96,7 +120,6 @@ public class Position : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
                 }
 
-                droppedCharacter.droppedOnSlot = true;
 
             }
 
@@ -112,17 +135,23 @@ public class Position : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
-   
-        Debug.Log("OnEndDrag");
-        rectTransform.anchoredPosition = initPosition;
-
-        if (droppedOnSlot)
+        if (dragStarted)
         {
-            
+            Debug.Log("OnEndDrag");
+
+            rectTransform.anchoredPosition = initPosition;
+
+            int tmpSiblingIndex = transform.GetSiblingIndex();
+            transform.SetSiblingIndex(tmpGameObject.transform.GetSiblingIndex());
+            tmpGameObject.transform.SetSiblingIndex(tmpSiblingIndex);
+
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
+
+            OnDragEnd();
+
         }
 
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
-        
+
     }
 }
