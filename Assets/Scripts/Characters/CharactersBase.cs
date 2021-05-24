@@ -76,6 +76,16 @@ public enum CharacterSpecie
     Butterfly
 }
 
+public enum Stat
+{
+    Attack,
+    Defense,
+    Speed,
+
+    Accuracy,
+    Evasion
+}
+
 public enum GrowthRate
 {
     Fast,

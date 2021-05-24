@@ -13,6 +13,8 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] GameObject skillDetails;
     [SerializeField] GameObject playerHud;
     [SerializeField] GameObject enemySelector;
+    [SerializeField] GameObject itemSelector;
+    [SerializeField] GameObject itemDetails;
 
     [SerializeField] List<Text> actionTexts;
     [SerializeField] List<Text> skillText;
@@ -20,8 +22,14 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] List<BattleUnit> enemyImages;
 
     [SerializeField] Text descriptionText;
+    [SerializeField] Text cooldownText;
+
+    [SerializeField] List<BattleItem> battleItems;
+    [SerializeField] Text itemName;
+    [SerializeField] Text itemDescription;
 
     public List<BattleUnit> EnemyImages { get => enemyImages; set => enemyImages = value; }
+    public List<BattleItem> BattleItems { get => battleItems; set => battleItems = value; }
 
     public void EnableActionSelector(bool enabled)
     {
@@ -46,6 +54,16 @@ public class BattleDialogBox : MonoBehaviour
     public void EnableEnemySelector(bool enabled)
     {
         enemySelector.SetActive(enabled);
+    }
+
+    public void EnableItemSelector(bool enabled)
+    {
+        itemSelector.SetActive(enabled);
+    }
+
+    public void EnableItemDetails(bool enabled)
+    {
+        itemDetails.SetActive(enabled);
     }
 
     public void UpdateActionSelection(int selectedAction)
@@ -78,6 +96,7 @@ public class BattleDialogBox : MonoBehaviour
         }
 
         descriptionText.text = skill.Base.Description;
+        cooldownText.text = "Cooldown: " + skill.CurrentTurnCooldown.ToString();
     }
 
     public void UpdateEnemySelection(int selectedEnemy)
@@ -98,6 +117,19 @@ public class BattleDialogBox : MonoBehaviour
 
     }
 
+    public void UpdateItemSelection(int item)
+    {
+        for(var i = 0; i < BattleItems.Count; i++)
+        {
+            BattleItems[i].Image.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        }
+
+        BattleItems[item].Image.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+
+        itemName.text = BattleItems[item].ItemBase.Name;
+        itemDescription.text = BattleItems[item].ItemBase.Description;
+
+    }
     public void SetSkillNames(List<Skill> skills)
     {
 
@@ -126,5 +158,13 @@ public class BattleDialogBox : MonoBehaviour
         }
 
 
+    }
+
+    public void SetItemsMenu()
+    {
+        foreach(BattleItem bi in battleItems)
+        {
+            bi.QuantityTxt.text = "x" + bi.Items.Count.ToString();
+        }
     }
 }

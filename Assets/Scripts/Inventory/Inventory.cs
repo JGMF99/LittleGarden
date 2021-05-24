@@ -19,10 +19,16 @@ public class Inventory : MonoBehaviour
 
     private int selectedCharacter;
 
+    [SerializeField] PlayerController pc;
+
     [SerializeField] CharacterInfo characterInfo;
     [SerializeField] List<PartyMember> partyMembers;
     [SerializeField] EquipmentMenu bodyAndHelmetMenu;
     [SerializeField] CharacterEquipment characterEquipment;
+
+    [SerializeField] Text moneyTxt;
+    [SerializeField] Text healthPotsTxt;
+    [SerializeField] Text cooldownPotsTxt;
 
     public CharacterParty CharacterParty { get => characterParty; set => characterParty = value; }
 
@@ -57,6 +63,10 @@ public class Inventory : MonoBehaviour
 
         GetNonEquippedItems();
         bodyAndHelmetMenu.Setup(playerItemsNotEquipped);
+
+        moneyTxt.text = pc.Money.ToString();
+        healthPotsTxt.text = "Health Potion x" + pc.GetItemQuantity("Health Potion").ToString();
+        cooldownPotsTxt.text = "Cooldown Reduction Potion x" + pc.GetItemQuantity("Cooldown Reduction Potion").ToString();
 
         CharacterClicked(0);
     }

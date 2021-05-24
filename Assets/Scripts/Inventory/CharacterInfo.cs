@@ -35,7 +35,7 @@ public class CharacterInfo : MonoBehaviour
         }
 
         level.text = "Lvl: " + character.Level.ToString();
-        xp.text = "XP: " + character.Xp.ToString();
+        xp.text = "XP: " + character.Xp.ToString() + "/" + character.Base.GetExpForLevel(character.Level + 1);
         hp.text = "HP: " + character.HP.ToString() + "/" + character.MaxHp.ToString();
         attack.text = "Attack: " + character.Attack.ToString();
         defense.text = "Defense: " + character.Defense.ToString();

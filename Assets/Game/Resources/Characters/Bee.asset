@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Bee
   description: 
-  frontSprite: {fileID: 21300000, guid: 6e5d913536734ff408d3fbb4277c4ac4, type: 3}
-  sideSprite: {fileID: 21300000, guid: deb87cd484f4dca49a6ee9104fbaa95c, type: 3}
+  frontSprite: {fileID: -4656658513182322354, guid: 5bac82eaff6d56c4da8422e5fcf5acec, type: 3}
+  sideSprite: {fileID: -4656658513182322354, guid: 5bac82eaff6d56c4da8422e5fcf5acec, type: 3}
   specie: 1
   maxHp: 100
   attack: 50
@@ -25,4 +25,6 @@ MonoBehaviour:
   growthRate: 0
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: f43917932a6fd194ca4f74ad6d14cfb8, type: 2}
+    level: 1
+  - skillBase: {fileID: 11400000, guid: 6998bd696ab41e3459affbff9deeaa8a, type: 2}
     level: 1

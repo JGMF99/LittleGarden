@@ -15,5 +15,12 @@ MonoBehaviour:
   name: Bite
   description: Deals damage to the enemy
   damage: 40
-  accuracy: 50
+  accuracy: 100
+  alwaysHits: 1
   turnsCooldown: 0
+  position: 1
+  category: 0
+  effects:
+    boosts: []
+    status: 0
+  target: 0

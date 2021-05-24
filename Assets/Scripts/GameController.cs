@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour
         var team = playerController.GetComponent<CharacterParty>();
         var enemy = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetRandomEnemy();
 
-        battleSystem.StartBattle(team,enemy);
+        battleSystem.StartBattle(team,enemy, playerController.items);
     }
 
     private void EndBattle(bool obj, EnemyParty enemies)

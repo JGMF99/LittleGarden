@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Spider
   description: 
-  frontSprite: {fileID: 21300000, guid: 936a865bec1e99e439deb3799d71f1d9, type: 3}
-  sideSprite: {fileID: 21300000, guid: a7ebd1ee502443f4197a581f46b95d5e, type: 3}
+  frontSprite: {fileID: 3873087697204469031, guid: e9023d77ae4b61b4d81f4dc45d41fb4b, type: 3}
+  sideSprite: {fileID: 3873087697204469031, guid: e9023d77ae4b61b4d81f4dc45d41fb4b, type: 3}
   specie: 2
   maxHp: 500
   attack: 200
@@ -25,4 +25,6 @@ MonoBehaviour:
   growthRate: 0
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: b556311db1353e84cb098d774ca8ce3e, type: 2}
+    level: 1
+  - skillBase: {fileID: 11400000, guid: 70513d81264675d41b3cbbc43be1bf5e, type: 2}
     level: 1

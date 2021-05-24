@@ -58,10 +58,12 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Characters\SkillBase.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Interactable.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\ItemReceived.cs" />
     <Compile Include="Assets\Scripts\Characters\CharacterParty.cs" />
     <Compile Include="Assets\Scripts\Inventory\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\Inventory\Position.cs" />
     <Compile Include="Assets\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\Characters\Condition.cs" />
     <Compile Include="Assets\Scripts\Player\NPCController.cs" />
     <Compile Include="Assets\Scripts\Battle\EnemyParty.cs" />
     <Compile Include="Assets\Scripts\Inventory\Inventory.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Assets\Scripts\Gameplay\QuestGiver.cs" />
     <Compile Include="Assets\Scripts\Characters\Skill.cs" />
     <Compile Include="Assets\Scripts\Inventory\ItemBase.cs" />
+    <Compile Include="Assets\Scripts\Data\ConditionsDB.cs" />
     <Compile Include="Assets\Scripts\Gameplay\MapArea.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Dialog.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleSystem.cs" />
@@ -87,10 +90,10 @@
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Inventory\ItemSlot.cs" />
     <Compile Include="Assets\Scripts\Gameplay\QuestGoal.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\QuestCompleted.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Quest.cs" />
     <Compile Include="Assets\Scripts\Inventory\PartyMember.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\QuestCompleted.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\ItemReceived.cs" />
+    <Compile Include="Assets\Scripts\Battle\BattleItem.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

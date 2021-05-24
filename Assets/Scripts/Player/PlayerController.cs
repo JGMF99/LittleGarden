@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     public List<Item> Items { get => items; set => items = value; }
     public List<Quest> Quests { get => quests; set => quests = value; }
+    public int Money { get => money; set => money = value; }
 
     private void Awake()
     {
@@ -106,6 +107,15 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    internal int GetItemQuantity(string v)
+    {
+        int n = 0;
+        foreach (Item i in Items)
+            if (i.Base.name.Equals(v))
+                n++;
+        return n;
+    }
+
     internal void CheckKillQuests(EnemyParty enemies)
     {
         foreach(Quest q in quests)
@@ -120,7 +130,7 @@ public class PlayerController : MonoBehaviour
                     q.Complete();
 
                     //Money reward
-                    money += q.moneyReward;
+                    Money += q.moneyReward;
 
                     //Experience reward
                     foreach(Character c in GetComponent<CharacterParty>().Team)

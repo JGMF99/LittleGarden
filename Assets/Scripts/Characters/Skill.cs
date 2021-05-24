@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,15 +6,49 @@ using UnityEngine;
 public class Skill
 {
 
-    public SkillBase Base { get; set; }
-    public int TurnsCooldown { get ; set; }
+    private int currentTurnCooldown;
 
-    public bool IsBackRow { get; set; }
+    public SkillBase Base { get; set; }
+
+    public int CurrentTurnCooldown { get => currentTurnCooldown; set => currentTurnCooldown = value; }
 
     public Skill(SkillBase cBase)
     {
         Base = cBase;
-        TurnsCooldown = cBase.TurnsCooldown;
     }
 
+    internal void PutCooldown()
+    {
+        CurrentTurnCooldown = Base.TurnsCooldown;
+    }
+
+    internal void ResetCooldown()
+    {
+        CurrentTurnCooldown = 0;
+    }
+
+    internal bool IsValid(BattleUnit unit)
+    {
+        bool isValid = false;
+        if (unit.IsPlayerUnit)
+        {
+            if (unit.Character.Position % 2 == 0 && Base.Position == SkillPosition.BackRow)
+                isValid = true;
+            else if (unit.Character.Position % 2 == 1 && Base.Position == SkillPosition.FrontRow)
+                isValid = true;
+            else if (Base.Position == SkillPosition.Both)
+                isValid = true;
+        }
+        else
+        {
+            if (unit.Character.Position % 2 == 0 && Base.Position == SkillPosition.FrontRow)
+                isValid = true;
+            else if (unit.Character.Position % 2 == 1 && Base.Position == SkillPosition.BackRow)
+                isValid = true;
+            else if (Base.Position == SkillPosition.Both)
+                isValid = true;
+        }
+
+        return isValid && CurrentTurnCooldown == 0;
+    }
 }

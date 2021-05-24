@@ -10,7 +10,7 @@ public class MapArea : MonoBehaviour
 
     public EnemyParty GetRandomEnemy()
     {
-        var numberEnemies = Random.Range(1, 5);
+        var numberEnemies = Random.Range(1, 4);
 
         var enemyParty = new EnemyParty
         {

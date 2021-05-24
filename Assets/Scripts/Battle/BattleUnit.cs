@@ -9,6 +9,8 @@ public class BattleUnit : MonoBehaviour
 
     [SerializeField] bool isPlayerUnit;
     [SerializeField] HPBar hpBar;
+    [SerializeField] GameObject stun;
+    [SerializeField] GameObject poison;
 
     public Character Character{get; set; }
     public bool IsPlayerUnit { get => isPlayerUnit; set => isPlayerUnit = value; }
@@ -19,10 +21,15 @@ public class BattleUnit : MonoBehaviour
         GetComponent<Image>().color = Color.clear;
         hpBar.gameObject.SetActive(false);
         Character = null;
+
+        ShowPoison(false);
+        ShowStun(false);
     }
 
     public void Setup(Character character)
     {
+
+       
         if(character != null)
         {
             Character = character;
@@ -32,10 +39,16 @@ public class BattleUnit : MonoBehaviour
 
             hpBar.gameObject.SetActive(true);
             UpdateHP();
+
+            ShowPoison(character.Status.Contains(ConditionsDB.Conditions[ConditionID.psn]));
+            ShowStun(character.Status.Contains(ConditionsDB.Conditions[ConditionID.stn]));
         }
         else
         {
             GetComponent<Image>().color = Color.clear;
+
+            ShowPoison(false);
+            ShowStun(false);
         }
         
     }
@@ -61,6 +74,8 @@ public class BattleUnit : MonoBehaviour
     {
         GetComponent<Image>().color = Color.clear;
         hpBar.gameObject.SetActive(false);
+        ShowPoison(false);
+        ShowStun(false);
     }
 
     public void UpdateHP()
@@ -91,5 +106,15 @@ public class BattleUnit : MonoBehaviour
 
         }  
 
+    }
+
+    public void ShowStun(bool showStun)
+    {
+        stun.SetActive(showStun);
+    }
+
+    public void ShowPoison(bool showPoiston)
+    {
+        poison.SetActive(showPoiston);
     }
 }
