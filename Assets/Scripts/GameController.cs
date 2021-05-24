@@ -78,8 +78,9 @@ public class GameController : MonoBehaviour
     {
         var team = playerController.GetComponent<CharacterParty>();
         var items = playerController.Items;
+        var quests = playerController.Quests;
 
-        bool isOpen = InventoryUI.Instance.Open(team,items);
+        bool isOpen = InventoryUI.Instance.Open(team,items, quests);
 
         if (isOpen)
             state = GameState.Inventory;

@@ -122,7 +122,7 @@ MonoBehaviour:
   m_MinSize: {x: 679, y: 342}
   m_MaxSize: {x: 12004, y: 8042}
   vertical: 0
-  controlID: 57
+  controlID: 61
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -246,8 +246,8 @@ MonoBehaviour:
     y: 594
     width: 1468
     height: 353
-  m_MinSize: {x: 100, y: 100}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 101, y: 121}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 16}
@@ -458,23 +458,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: be420000
-      m_LastClickedID: 17086
-      m_ExpandedIDs: c6acffff2eaeffff1cbcffffeec5ffff5ceaffff18f8ffff40fbffffac410000be41000042420000d8440000144600007246000056470000
+      m_SelectedIDs: 4a430000
+      m_LastClickedID: 17226
+      m_ExpandedIDs: bee5ffffa6f7ffffe4f9ffff40fbffffe640000012410000bc410000ce410000b24200004a4300002445000078460000d2470000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
+        m_Name: HealthQuantity
+        m_OriginalName: HealthQuantity
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 0
+        m_UserData: 18282
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 11
+        m_OriginalEventType: 0
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 8}
       m_SearchString: 
@@ -520,9 +520,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -29.628513, y: 0.38413772, z: 393.60928}
+    m_Target: {x: -30.174381, y: 0.27193737, z: -88.86889}
     speed: 2
-    m_Value: {x: -29.628513, y: 0.38413772, z: 393.60928}
+    m_Value: {x: -30.174381, y: 0.27193737, z: -88.86889}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -573,9 +573,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 5.937745
+    m_Target: 5.3104725
     speed: 2
-    m_Value: 5.937745
+    m_Value: 5.3104725
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -650,24 +650,24 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 220}
-    m_SelectedIDs: de480000
-    m_LastClickedID: 18654
-    m_ExpandedIDs: 00000000a8480000aa480000ac480000ae480000b0480000b248000000ca9a3b
+    scrollPos: {x: 0, y: 160}
+    m_SelectedIDs: 68490000
+    m_LastClickedID: 18792
+    m_ExpandedIDs: 00000000184900001a4900001c4900001e490000204900002249000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: Gameplay
+      m_OriginalName: Gameplay
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 18798
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 10}
     m_SearchString: 
@@ -681,7 +681,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000a8480000aa480000ac480000ae480000b0480000b2480000
+    m_ExpandedIDs: 00000000184900001a4900001c4900001e4900002049000022490000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -706,8 +706,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 4c0f0000
-    m_LastClickedInstanceID: 3916
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000a644000000000000804500004e6000000c73000072790000d4470000f6470000
     m_RenameOverlay:
@@ -794,7 +794,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 540
+  m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_LockTracker:
     m_IsLocked: 0

@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Inventory\EquipmentSlot.cs" />
     <Compile Include="Assets\Scripts\Battle\HPBar.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleUnit.cs" />
+    <Compile Include="Assets\Scripts\Battle\BattleItem.cs" />
     <Compile Include="Assets\Scripts\Characters\CharactersBase.cs" />
     <Compile Include="Assets\Scripts\Gameplay\DialogManager.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
@@ -93,7 +94,8 @@
     <Compile Include="Assets\Scripts\Gameplay\QuestCompleted.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Quest.cs" />
     <Compile Include="Assets\Scripts\Inventory\PartyMember.cs" />
-    <Compile Include="Assets\Scripts\Battle\BattleItem.cs" />
+    <Compile Include="Assets\Scripts\Inventory\QuestBox.cs" />
+    <Compile Include="Assets\Scripts\Inventory\QuestPanel.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

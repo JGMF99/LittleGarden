@@ -50,6 +50,7 @@ public class Character
         HP = MaxHp;
 
         ResetStatBoost();
+        ResetStatus();
     }
 
     void CalculateStats()
@@ -79,6 +80,8 @@ public class Character
     void ResetStatus()
     {
         status = new List<Condition>();
+        poisonTime = 0;
+        stunTime = 0;
     }
 
     void ResetCooldowns()
@@ -176,7 +179,7 @@ public class Character
             var oldMaxHp = MaxHp;
             Level++;
             CalculateStats();
-            Mathf.Clamp(HP + MaxHp - oldMaxHp, 0, MaxHp);
+            HP = Mathf.Clamp(HP + MaxHp - oldMaxHp, 0, MaxHp);
             return true;
         }
             

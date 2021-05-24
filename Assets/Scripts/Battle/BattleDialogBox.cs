@@ -30,6 +30,8 @@ public class BattleDialogBox : MonoBehaviour
 
     public List<BattleUnit> EnemyImages { get => enemyImages; set => enemyImages = value; }
     public List<BattleItem> BattleItems { get => battleItems; set => battleItems = value; }
+    public List<Text> ActionTexts { get => actionTexts; set => actionTexts = value; }
+    public List<Text> SkillText { get => skillText; set => skillText = value; }
 
     public void EnableActionSelector(bool enabled)
     {
@@ -68,30 +70,30 @@ public class BattleDialogBox : MonoBehaviour
 
     public void UpdateActionSelection(int selectedAction)
     {
-        for(int i = 0; i < actionTexts.Count; i++)
+        for(int i = 0; i < ActionTexts.Count; i++)
         {
             if(i == selectedAction)
             {
-                actionTexts[i].color = highlightedColor;
+                ActionTexts[i].color = highlightedColor;
             }
             else
             {
-                actionTexts[i].color = Color.black;
+                ActionTexts[i].color = Color.black;
             }
         }
     }
 
     public void UpdateSkillSelection(int selectedSkill, Skill skill)
     {
-        for (int i = 0; i < skillText.Count; i++)
+        for (int i = 0; i < SkillText.Count; i++)
         {
             if (i == selectedSkill)
             {
-                skillText[i].color = highlightedColor;
+                SkillText[i].color = highlightedColor;
             }
             else
             {
-                skillText[i].color = Color.black;
+                SkillText[i].color = Color.black;
             }
         }
 
@@ -133,13 +135,13 @@ public class BattleDialogBox : MonoBehaviour
     public void SetSkillNames(List<Skill> skills)
     {
 
-        for(int i = 0; i < skillText.Count; i++)
+        for(int i = 0; i < SkillText.Count; i++)
         {
 
             if (i < skills.Count)
-                skillText[i].text = skills[i].Base.Name;
+                SkillText[i].text = skills[i].Base.Name;
             else
-                skillText[i].text = "-";
+                SkillText[i].text = "-";
 
         }
 

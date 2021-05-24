@@ -32,6 +32,8 @@ public class BattleSystem : MonoBehaviour
     int currentPosition;
     int currentItem;
 
+    Skill selectedSkill;
+
     CharacterParty team;
     EnemyParty enemies;
 
@@ -104,10 +106,31 @@ public class BattleSystem : MonoBehaviour
             }
         }
 
+        ButtonListeners();
+
         yield return null;
 
         DecideNextTurn();
 
+    }
+
+    public void ButtonListeners()
+    {
+        dialogBox.ActionTexts[0].GetComponent<Button>().onClick.RemoveAllListeners();
+        dialogBox.ActionTexts[0].GetComponent<Button>().onClick.AddListener(PlayerSkill);
+        dialogBox.ActionTexts[1].GetComponent<Button>().onClick.RemoveAllListeners();
+        dialogBox.ActionTexts[1].GetComponent<Button>().onClick.AddListener(PlayerPosition);
+        dialogBox.ActionTexts[2].GetComponent<Button>().onClick.RemoveAllListeners();
+        dialogBox.ActionTexts[2].GetComponent<Button>().onClick.AddListener(PlayerItem);
+        dialogBox.ActionTexts[3].GetComponent<Button>().onClick.RemoveAllListeners();
+        dialogBox.ActionTexts[3].GetComponent<Button>().onClick.AddListener(RunAway);
+
+        foreach (BattleItem bi in dialogBox.BattleItems)
+        {
+            bi.GetComponent<Button>().onClick.RemoveAllListeners();
+            bi.GetComponent<Button>().onClick.AddListener(() => StartCoroutine(UseItem(bi)));
+        }
+            
     }
 
     void DecideNextTurn()
@@ -120,13 +143,34 @@ public class BattleSystem : MonoBehaviour
         if (nextTurn.IsPlayerUnit)
         {
             dialogBox.SetSkillNames(nextTurn.Character.Skills);
+            for(var i = 0; i < dialogBox.SkillText.Count; i++)
+            {
+                dialogBox.SkillText[i].GetComponent<Button>().onClick.RemoveAllListeners();
+                var i2 = i;
+                if (i < nextTurn.Character.Skills.Count)
+                    dialogBox.SkillText[i].GetComponent<Button>().onClick.AddListener(() => DecideWhatToDoSkill(nextTurn.Character.Skills[i2], nextTurn));
+                else
+                    dialogBox.SkillText[i].GetComponent<Button>().onClick.AddListener(() => DecideWhatToDoSkill(null, nextTurn));
+            }
+
             dialogBox.SetEnemyImages(enemyUnits);
+            for (var i = 0; i < dialogBox.EnemyImages.Count; i++)
+            {
+                dialogBox.EnemyImages[i].GetComponent<Button>().onClick.RemoveAllListeners();
+                var i2 = i;
+                if (i < enemyUnits.Count)
+                    dialogBox.EnemyImages[i].GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetEnemy(enemyUnits[i2]));
+                else
+                    dialogBox.EnemyImages[i].GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetEnemy(null));
+            }
+
             dialogBox.SetItemsMenu();
             playerUnit = nextTurn;
             PlayerAction();
         }
         else
         {
+            dialogBox.EnableActionSelector(false);
             enemyUnit = nextTurn;
             StartCoroutine(EnemyMove());
         }
@@ -171,6 +215,7 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.TargetEnemy;
 
+        dialogBox.EnableSkillSelector(false);
         dialogBox.EnableSkillDetails(false);
         dialogBox.EnableEnemySelector(true);
 
@@ -180,6 +225,8 @@ public class BattleSystem : MonoBehaviour
     void PlayerPosition()
     {
         state = BattleState.PlayerPosition;
+
+        dialogBox.EnableActionSelector(false);
 
         if (playerUnit.Character.Position != 0)
             currentPosition = 0;
@@ -198,11 +245,9 @@ public class BattleSystem : MonoBehaviour
         currentItem = 0;
     }
 
-    IEnumerator PerformPlayerSkill()
+    IEnumerator PerformPlayerSkill(Skill skill)
     {
         state = BattleState.Busy;
-
-        var skill = playerUnit.Character.Skills[currentSkill];
 
         yield return new WaitForSeconds(1f);
 
@@ -450,14 +495,13 @@ public class BattleSystem : MonoBehaviour
         DecideNextTurn();
     }
 
-    IEnumerator UseItem()
+    IEnumerator UseItem(BattleItem bi)
     {
+        Debug.Log("Use Item");
         state = BattleState.Busy;
 
         //Reduce all cooldowns and status turns
         bool canRunMove = playerUnit.Character.OnBeforeMove(playerUnit);
-
-        BattleItem bi = dialogBox.BattleItems[currentItem];
 
         Item item = bi.Items.Last();
 
@@ -592,23 +636,37 @@ public class BattleSystem : MonoBehaviour
 
         Skill skill = playerUnit.Character.Skills[currentSkill];
 
-        if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M)) && skill.IsValid(playerUnit))
+        if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M)))
         {
-            if(playerUnit.Character.Skills[currentSkill].Base.Target != SkillTarget.Self)
-                TargetEnemy();
-            else
-            {
-                dialogBox.EnableSkillSelector(false);
-                dialogBox.EnableSkillDetails(false);
-
-                StartCoroutine(PerformPlayerSkill());
-            }
-        }else if (Input.GetKeyDown(KeyCode.Backspace))
+            DecideWhatToDoSkill(skill, playerUnit);
+        }
+        else if (Input.GetKeyDown(KeyCode.Backspace))
         {
             dialogBox.EnableSkillSelector(false);
             dialogBox.EnableSkillDetails(false);
             PlayerAction();
         }
+    }
+
+    void DecideWhatToDoSkill(Skill skill, BattleUnit battleUnit)
+    {
+        Debug.Log("DecideWhatToDoSkill");
+        if(skill != null && skill.IsValid(battleUnit))
+        {
+            if (skill.Base.Target == SkillTarget.Foe)
+            {
+                selectedSkill = skill;
+                TargetEnemy();
+            } 
+            else
+            {
+                dialogBox.EnableSkillSelector(false);
+                dialogBox.EnableSkillDetails(false);
+
+                StartCoroutine(PerformPlayerSkill(skill));
+            }
+        }
+        
     }
 
     void HandleTargetEnemy()
@@ -627,12 +685,7 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
-            dialogBox.EnableSkillSelector(false);
-            dialogBox.EnableEnemySelector(false);
-
-            enemyUnit = enemyUnits[currentTarget];
-
-            StartCoroutine(PerformPlayerSkill());
+            WhatToDoTargetEnemy(enemyUnits[currentTarget]);
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
         {
@@ -640,6 +693,20 @@ public class BattleSystem : MonoBehaviour
             PlayerSkill();
         }
 
+    }
+
+    public void WhatToDoTargetEnemy(BattleUnit targetUnit)
+    {
+        Debug.Log("WhatToDoTargetEnemy");
+        if (targetUnit != null)
+        {
+            dialogBox.EnableEnemySelector(false);
+
+            enemyUnit = targetUnit;
+
+            StartCoroutine(PerformPlayerSkill(selectedSkill));
+        }
+        
     }
 
     private void UpdateEnemySelection(int currentTarget)
@@ -736,7 +803,7 @@ public class BattleSystem : MonoBehaviour
 
         if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M)) && dialogBox.BattleItems[currentItem].Items.Count > 0)
         {
-            StartCoroutine(UseItem());
+            StartCoroutine(UseItem(dialogBox.BattleItems[currentItem]));
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
         {
