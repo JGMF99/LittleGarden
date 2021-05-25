@@ -34020,7 +34020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogBox: {fileID: 73103006}
-  NPCFace: {fileID: 0}
+  NPCFace: {fileID: 240475581}
   dialogText: {fileID: 85878652}
   lettersPerSecond: 45
 --- !u!114 &1077857294
