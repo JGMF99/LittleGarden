@@ -60,13 +60,17 @@ public class GameController : MonoBehaviour
 
         var team = playerController.GetComponent<CharacterParty>();
         var enemy = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetRandomEnemy();
+        AudioManager.instance.StopPlaying("RoamMusic");
+        AudioManager.instance.Play("BattleMusic");
 
         battleSystem.StartBattle(team,enemy, playerController.items);
     }
 
     private void EndBattle(bool obj, EnemyParty enemies)
     {
-        state = GameState.FreeRoam;
+        state = GameState.FreeRoam; 
+        AudioManager.instance.StopPlaying("BattleMusic");
+        AudioManager.instance.Play("RoamMusic");
 
         playerController.CheckKillQuests(enemies);
 
