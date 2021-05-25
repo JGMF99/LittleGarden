@@ -10,7 +10,8 @@ public class NPCController : MonoBehaviour, Interactable
     {
 
         QuestGiver qg = GetComponent<QuestGiver>();
+        RecruitmentGiver rg = GetComponent<RecruitmentGiver>();
 
-        StartCoroutine(DialogManager.Instance.ShowDialog(dialog, qg));
+        StartCoroutine(DialogManager.Instance.ShowDialog(dialog, qg, rg));
     }
 }

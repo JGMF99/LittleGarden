@@ -22,7 +22,7 @@ public class BattleSystem : MonoBehaviour
 
     [SerializeField] BattleDialogBox dialogBox;
 
-    public event Action<bool, EnemyParty> OnBattleOver;
+    public event Action<bool, EnemyParty, Recruitment> OnBattleOver;
 
     BattleState state;
 
@@ -46,12 +46,14 @@ public class BattleSystem : MonoBehaviour
 
     List<Item> playerItems;
 
-    public void StartBattle(CharacterParty team, EnemyParty enemies, List<Item> items)
+    private Recruitment recruitment;
+
+    public void StartBattle(CharacterParty team, EnemyParty enemies, List<Item> items, Recruitment recruitment)
     {
         this.team = team;
         this.enemies = enemies;
         playerItems = items;
-        
+        this.recruitment = recruitment;
 
         StartCoroutine(SetupBattle());
     }
@@ -204,7 +206,7 @@ public class BattleSystem : MonoBehaviour
         if (runSuccessful)
         {
             team.Team.ForEach(c => c.OnBattleOver());
-            OnBattleOver(false, enemies);
+            OnBattleOver(false, enemies, recruitment);
         }  
         else
             DecideNextTurn();
@@ -260,11 +262,11 @@ public class BattleSystem : MonoBehaviour
         if (playerUnits.Count == 0)
         {
             team.Team.ForEach(c => c.OnBattleOver());
-            OnBattleOver(false, enemies);
+            OnBattleOver(false, enemies, recruitment);
         }else if(enemyUnits.Count == 0)
         {
             team.Team.ForEach(c => c.OnBattleOver());
-            OnBattleOver(true, enemies);
+            OnBattleOver(true, enemies, recruitment);
         }
         else
         {
@@ -293,12 +295,12 @@ public class BattleSystem : MonoBehaviour
         if (playerUnits.Count == 0)
         {
             team.Team.ForEach(c => c.OnBattleOver());
-            OnBattleOver(false, enemies);
+            OnBattleOver(false, enemies, recruitment);
         }
         else if (enemyUnits.Count == 0)
         {
             team.Team.ForEach(c => c.OnBattleOver());
-            OnBattleOver(true, enemies);
+            OnBattleOver(true, enemies, recruitment);
         }else
         {
             DecideNextTurn();

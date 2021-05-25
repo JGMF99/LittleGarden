@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -40,6 +41,26 @@ public class GameController : MonoBehaviour
                         state = GameState.FreeRoam;
                     };
                 }
+                else if(DialogManager.Instance.Recruitment != null)
+                {
+                    if (!DialogManager.Instance.Recruitment.recruitment.isDone)
+                    {
+                        StartRecruitmentBattle(DialogManager.Instance.Recruitment.recruitment, new EnemyParty
+                        {
+                            Team = DialogManager.Instance.Recruitment.recruitment.TeamToDefeat
+                        });
+                    }
+                    else
+                    {
+                        DialogManager.Instance.Recruitment.OpenNewCharacterWindow(playerController);
+
+                        DialogManager.Instance.Recruitment.OnNewCharacterWindowClose += () =>
+                        {
+                            state = GameState.FreeRoam;
+                        };
+                    }
+                    
+                }
                 else
                 {
                     state = GameState.FreeRoam;
@@ -50,7 +71,26 @@ public class GameController : MonoBehaviour
         };
     }
 
-    
+    void StartRecruitmentBattle(Recruitment recruitment, EnemyParty enemy)
+    {
+        state = GameState.Battle;
+        battleSystem.gameObject.SetActive(true);
+        worldCamera.gameObject.SetActive(false);
+
+        var team = playerController.GetComponent<CharacterParty>();
+
+        for (var i = 0; i < enemy.Team.Count; i++)
+        {
+            enemy.Team[i].Init();
+        }
+
+        enemy.Team = enemy.Team.OrderBy(o => o.Position).ToList();
+        AudioManager.instance.StopPlaying("RoamMusic");
+        AudioManager.instance.Play("BattleMusic");
+
+
+        battleSystem.StartBattle(team, enemy, playerController.items, recruitment);
+    }
 
     void StartBattle()
     {
@@ -63,10 +103,10 @@ public class GameController : MonoBehaviour
         AudioManager.instance.StopPlaying("RoamMusic");
         AudioManager.instance.Play("BattleMusic");
 
-        battleSystem.StartBattle(team,enemy, playerController.items);
+        battleSystem.StartBattle(team,enemy, playerController.items, null);
     }
 
-    private void EndBattle(bool obj, EnemyParty enemies)
+    private void EndBattle(bool obj, EnemyParty enemies, Recruitment recruitment)
     {
         state = GameState.FreeRoam; 
         AudioManager.instance.StopPlaying("BattleMusic");
@@ -76,6 +116,10 @@ public class GameController : MonoBehaviour
 
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
+
+        if (obj && recruitment != null)
+            playerController.CompletedRecruitment(recruitment);
+            //Debug.Log($"Recruitment battle won! {recruitment.Character.Name} is now available!");
     }
 
     private void OpenInventory()

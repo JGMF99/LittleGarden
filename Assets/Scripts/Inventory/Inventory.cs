@@ -9,6 +9,7 @@ public class Inventory : MonoBehaviour
 
     private List<Item> playerItems;
     private List<Item> playerItemsNotEquipped;
+    private List<Item> playerTrinketNotEquipped;
 
     private CharacterParty characterParty;
 
@@ -24,6 +25,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] CharacterInfo characterInfo;
     [SerializeField] List<PartyMember> partyMembers;
     [SerializeField] EquipmentMenu bodyAndHelmetMenu;
+    [SerializeField] EquipmentMenu trinketMenu;
     [SerializeField] CharacterEquipment characterEquipment;
 
     [SerializeField] Text moneyTxt;
@@ -63,6 +65,8 @@ public class Inventory : MonoBehaviour
 
         GetNonEquippedItems();
         bodyAndHelmetMenu.Setup(playerItemsNotEquipped);
+        GetNonEquippedTrinkets();
+        trinketMenu.Setup(playerTrinketNotEquipped);
 
         moneyTxt.text = pc.Money.ToString();
         healthPotsTxt.text = "Health Potion x" + pc.GetItemQuantity("Health Potion").ToString();
@@ -98,10 +102,26 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    private void GetNonEquippedTrinkets()
+    {
+        playerTrinketNotEquipped = new List<Item>();
+
+        foreach (var item in playerItems)
+        {
+            if (!item.IsEquipped && item.Base.Type == ItemType.Trinket )
+            {
+                playerTrinketNotEquipped.Add(item);
+            }
+
+        }
+    }
+
     public void UpdateChestPieces()
     {
         GetNonEquippedItems();
         bodyAndHelmetMenu.Setup(playerItemsNotEquipped);
+        GetNonEquippedTrinkets();
+        trinketMenu.Setup(playerTrinketNotEquipped);
     }
 
     public void ChangeSelectedCharacterEquipment(Item item, ItemType type)

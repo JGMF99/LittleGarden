@@ -27,4 +27,14 @@ public class CharacterParty : MonoBehaviour
     {
         return team.Where(x => x.HP > 0 && x.Position == position).FirstOrDefault();
     }
+
+    public int GetFirstAvailablePosition()
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            if (GetPositionCharacter(i) == null)
+                return i;
+        }
+        return -1;
+    }
 }

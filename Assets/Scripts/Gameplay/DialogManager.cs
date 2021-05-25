@@ -15,8 +15,10 @@ public class DialogManager : MonoBehaviour
     public event Action OnCloseDialog;
 
     private QuestGiver quest;
+    private RecruitmentGiver recruitment;
     public static DialogManager Instance { get; private set; }
     public QuestGiver Quest { get => quest; set => quest = value; }
+    public RecruitmentGiver Recruitment { get => recruitment; set => recruitment = value; }
 
     private void Awake()
     {
@@ -27,14 +29,19 @@ public class DialogManager : MonoBehaviour
     int currentLine = 0;
     bool isTyping;
 
-    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg)
+    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg, RecruitmentGiver rg)
     {
         yield return new WaitForEndOfFrame();
 
+        Quest = null;
+        Recruitment = null;
+
         OnShowDialog?.Invoke();
 
-        if(qg.quest.questState == QuestState.notStarted)
+        if(qg != null && qg.quest.questState == QuestState.notStarted)
             Quest = qg;
+        if (rg != null)
+            Recruitment = rg;
 
         this.dialog = dialog;
         NPCFace.SetActive(true);

@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameController gameController;
     [SerializeField] QuestCompleted questCompleted;
+    [SerializeField] RecruitmentCompleted recruitmentCompleted;
+
+    
 
     public float moveSpeed;
     public LayerMask solidObjetsLayer;
@@ -165,6 +168,17 @@ public class PlayerController : MonoBehaviour
             }
                 
 
+    }
+
+    internal void CompletedRecruitment(Recruitment recruitment)
+    {
+        recruitment.Completed();
+
+        recruitmentCompleted.CompletedRecruitment(recruitment);
+
+        gameController.state = GameState.PopUp;
+
+        recruitmentCompleted.OkBtn.onClick.AddListener(() => gameController.state = GameState.FreeRoam);
     }
 
     private void Interact()
