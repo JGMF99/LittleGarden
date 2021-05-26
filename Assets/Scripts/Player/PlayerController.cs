@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
     {
         int n = 0;
         foreach (Item i in Items)
-            if (i.Base.name.Equals(v))
+            if (i.Base.Name.Equals(v))
                 n++;
         return n;
     }

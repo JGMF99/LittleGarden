@@ -60,6 +60,14 @@ public class GameController : MonoBehaviour
                         };
                     }
                     
+                }else if(DialogManager.Instance.Shop != null)
+                {
+                    DialogManager.Instance.Shop.ShopPanel.OpenShop(playerController);
+
+                    DialogManager.Instance.Shop.ShopPanel.OnShopWindowClose += () =>
+                    {
+                        state = GameState.FreeRoam;
+                    };
                 }
                 else
                 {

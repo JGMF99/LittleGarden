@@ -16,9 +16,11 @@ public class DialogManager : MonoBehaviour
 
     private QuestGiver quest;
     private RecruitmentGiver recruitment;
+    private Shopper shop;
     public static DialogManager Instance { get; private set; }
     public QuestGiver Quest { get => quest; set => quest = value; }
     public RecruitmentGiver Recruitment { get => recruitment; set => recruitment = value; }
+    public Shopper Shop { get => shop; set => shop = value; }
 
     private void Awake()
     {
@@ -29,12 +31,13 @@ public class DialogManager : MonoBehaviour
     int currentLine = 0;
     bool isTyping;
 
-    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg, RecruitmentGiver rg)
+    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg, RecruitmentGiver rg, Shopper s)
     {
         yield return new WaitForEndOfFrame();
 
         Quest = null;
         Recruitment = null;
+        Shop = null;
 
         OnShowDialog?.Invoke();
 
@@ -42,6 +45,8 @@ public class DialogManager : MonoBehaviour
             Quest = qg;
         if (rg != null)
             Recruitment = rg;
+        if (s != null)
+            Shop = s;
 
         this.dialog = dialog;
         NPCFace.SetActive(true);

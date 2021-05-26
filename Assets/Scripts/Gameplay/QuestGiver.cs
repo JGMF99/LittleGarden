@@ -31,6 +31,7 @@ public class QuestGiver : MonoBehaviour
         //experienceText.text = quest.experienceReward.ToString();
         //moneyText.text = quest.moneyReward.ToString();
 
+        acceptButton.onClick.RemoveAllListeners();
         acceptButton.onClick.AddListener(() => AcceptQuest());
         declineButton.onClick.AddListener(() => DeclineQuest());
 
