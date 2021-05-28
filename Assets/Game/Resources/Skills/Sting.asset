@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Sting
   description: Deals damage to enemy
-  damage: 100
-  accuracy: 100
-  alwaysHits: 1
-  turnsCooldown: 0
+  damage: 70
+  accuracy: 90
+  alwaysHits: 0
+  turnsCooldown: 1
+  minTurns: 0
+  maxTurns: 0
   position: 1
   category: 0
+  area: 0
   effects:
     boosts: []
     status: 0
-  target: 0
+  target: 1

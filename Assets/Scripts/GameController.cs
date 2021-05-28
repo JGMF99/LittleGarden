@@ -69,6 +69,14 @@ public class GameController : MonoBehaviour
                         state = GameState.FreeRoam;
                     };
                 }
+                else if (DialogManager.Instance.Boss != null)
+                {
+                    StartBossBattle(new EnemyParty
+                    {
+                        Team = DialogManager.Instance.Boss.EnemyTeam
+                    });
+                    
+                }
                 else
                 {
                     state = GameState.FreeRoam;
@@ -81,37 +89,84 @@ public class GameController : MonoBehaviour
 
     void StartRecruitmentBattle(Recruitment recruitment, EnemyParty enemy)
     {
-        state = GameState.Battle;
-        battleSystem.gameObject.SetActive(true);
-        worldCamera.gameObject.SetActive(false);
-
         var team = playerController.GetComponent<CharacterParty>();
 
-        for (var i = 0; i < enemy.Team.Count; i++)
+        if(team.Team.Count > 0)
         {
-            enemy.Team[i].Init();
+            state = GameState.Battle;
+            battleSystem.gameObject.SetActive(true);
+            worldCamera.gameObject.SetActive(false);
+
+
+
+            for (var i = 0; i < enemy.Team.Count; i++)
+            {
+                enemy.Team[i].Init();
+            }
+
+            enemy.Team = enemy.Team.OrderBy(o => o.Position).ToList();
+            AudioManager.instance.StopPlaying("RoamMusic");
+            AudioManager.instance.Play("BattleMusic");
+
+
+            battleSystem.StartBattle(team, enemy, playerController.items, recruitment);
+        }
+        else
+        {
+            state = GameState.FreeRoam;
         }
 
-        enemy.Team = enemy.Team.OrderBy(o => o.Position).ToList();
-        AudioManager.instance.StopPlaying("RoamMusic");
-        AudioManager.instance.Play("BattleMusic");
+
+    }
+
+    void StartBossBattle(EnemyParty enemy)
+    {
+        var team = playerController.GetComponent<CharacterParty>();
+
+        if (team.Team.Count > 0)
+        {
+            state = GameState.Battle;
+            battleSystem.gameObject.SetActive(true);
+            worldCamera.gameObject.SetActive(false);
+
+            for (var i = 0; i < enemy.Team.Count; i++)
+            {
+                enemy.Team[i].Init();
+            }
+
+            enemy.Team = enemy.Team.OrderBy(o => o.Position).ToList();
+            AudioManager.instance.StopPlaying("RoamMusic");
+            AudioManager.instance.Play("BattleMusic");
 
 
-        battleSystem.StartBattle(team, enemy, playerController.items, recruitment);
+            battleSystem.StartBattle(team, enemy, playerController.items, null);
+        }
+        else
+        {
+            state = GameState.FreeRoam;
+        }
+
+
     }
 
     void StartBattle()
     {
-        state = GameState.Battle;
-        battleSystem.gameObject.SetActive(true);
-        worldCamera.gameObject.SetActive(false);
-
         var team = playerController.GetComponent<CharacterParty>();
-        var enemy = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetRandomEnemy();
-        AudioManager.instance.StopPlaying("RoamMusic");
-        AudioManager.instance.Play("BattleMusic");
 
-        battleSystem.StartBattle(team,enemy, playerController.items, null);
+        if(team.Team.Count > 0)
+        {
+            state = GameState.Battle;
+            battleSystem.gameObject.SetActive(true);
+            worldCamera.gameObject.SetActive(false);
+
+
+            var enemy = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetRandomEnemy();
+            AudioManager.instance.StopPlaying("RoamMusic");
+            AudioManager.instance.Play("BattleMusic");
+
+            battleSystem.StartBattle(team, enemy, playerController.items, null);
+        }
+ 
     }
 
     private void EndBattle(bool obj, EnemyParty enemies, Recruitment recruitment)

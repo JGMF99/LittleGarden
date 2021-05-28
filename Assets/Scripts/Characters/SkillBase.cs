@@ -16,9 +16,13 @@ public class SkillBase : ScriptableObject
     [SerializeField] bool alwaysHits;
     [SerializeField] int turnsCooldown;
 
+    [SerializeField] int minTurns;
+    [SerializeField] int maxTurns;
+
     [SerializeField] SkillPosition position;
 
     [SerializeField] SkillCategory category;
+    [SerializeField] SkillArea area;
     [SerializeField] SkillEffects effects;
     [SerializeField] SkillTarget target;
 
@@ -32,6 +36,9 @@ public class SkillBase : ScriptableObject
     public SkillCategory Category { get => category; set => category = value; }
     public SkillPosition Position { get => position; set => position = value; }
     public bool AlwaysHits { get => alwaysHits; set => alwaysHits = value; }
+    public SkillArea Area { get => area; set => area = value; }
+    public int MinTurns { get => minTurns; set => minTurns = value; }
+    public int MaxTurns { get => maxTurns; set => maxTurns = value; }
 }
 
 [System.Serializable]
@@ -53,12 +60,17 @@ public class StatBoost
 
 public enum SkillTarget
 {
-    Foe, Self
+    FoeAlly, FoeEnemy, Self
+}
+
+public enum SkillArea
+{
+    Single, AoE
 }
 
 public enum SkillCategory
 {
-    Physical, Status
+    Physical, Status, Heal
 }
 
 public enum SkillPosition

@@ -15,12 +15,15 @@ MonoBehaviour:
   name: String
   description: Stuns target enemy for some turns
   damage: 0
-  accuracy: 100
-  alwaysHits: 1
-  turnsCooldown: 2
+  accuracy: 95
+  alwaysHits: 0
+  turnsCooldown: 3
+  minTurns: 2
+  maxTurns: 3
   position: 1
   category: 1
+  area: 0
   effects:
     boosts: []
     status: 2
-  target: 0
+  target: 1

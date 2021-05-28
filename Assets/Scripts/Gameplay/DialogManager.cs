@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class DialogManager : MonoBehaviour
 {
     [SerializeField] GameObject dialogBox;
-    [SerializeField] GameObject NPCFace;
     [SerializeField] Text dialogText;
     [SerializeField] int lettersPerSecond;
 
@@ -17,10 +16,13 @@ public class DialogManager : MonoBehaviour
     private QuestGiver quest;
     private RecruitmentGiver recruitment;
     private Shopper shop;
+    private Boss boss;
+
     public static DialogManager Instance { get; private set; }
     public QuestGiver Quest { get => quest; set => quest = value; }
     public RecruitmentGiver Recruitment { get => recruitment; set => recruitment = value; }
     public Shopper Shop { get => shop; set => shop = value; }
+    public Boss Boss { get => boss; set => boss = value; }
 
     private void Awake()
     {
@@ -31,13 +33,14 @@ public class DialogManager : MonoBehaviour
     int currentLine = 0;
     bool isTyping;
 
-    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg, RecruitmentGiver rg, Shopper s)
+    public IEnumerator ShowDialog(Dialog dialog, QuestGiver qg, RecruitmentGiver rg, Shopper s, Boss b)
     {
         yield return new WaitForEndOfFrame();
 
         Quest = null;
         Recruitment = null;
         Shop = null;
+        Boss = null;
 
         OnShowDialog?.Invoke();
 
@@ -47,9 +50,10 @@ public class DialogManager : MonoBehaviour
             Recruitment = rg;
         if (s != null)
             Shop = s;
+        if (b != null)
+            Boss = b;
 
         this.dialog = dialog;
-        NPCFace.SetActive(true);
         dialogBox.SetActive(true);
         StartCoroutine(TypeDialog(dialog.Lines[0]));
     }
@@ -66,7 +70,6 @@ public class DialogManager : MonoBehaviour
             {
                 currentLine = 0;
                 dialogBox.SetActive(false);
-                NPCFace.SetActive(false);
                 OnCloseDialog?.Invoke();
             }
         }

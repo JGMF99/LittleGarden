@@ -221,4 +221,13 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    public Item GetHealthPotion()
+    {
+        foreach (Item i in Items)
+            if (i.Base.Name.Equals("Health Potion"))
+                return i;
+
+        return null;
+    }
 }

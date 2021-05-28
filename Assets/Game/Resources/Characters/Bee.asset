@@ -26,5 +26,9 @@ MonoBehaviour:
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: f43917932a6fd194ca4f74ad6d14cfb8, type: 2}
     level: 1
+  - skillBase: {fileID: 11400000, guid: 350551028bbf4c24aa4b27d48ab688b7, type: 2}
+    level: 2
   - skillBase: {fileID: 11400000, guid: 6998bd696ab41e3459affbff9deeaa8a, type: 2}
-    level: 1
+    level: 3
+  - skillBase: {fileID: 11400000, guid: 2a28f597e513e724e83660e30646b7c0, type: 2}
+    level: 4

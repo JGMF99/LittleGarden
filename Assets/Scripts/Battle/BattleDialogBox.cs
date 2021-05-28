@@ -13,13 +13,16 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] GameObject skillDetails;
     [SerializeField] GameObject playerHud;
     [SerializeField] GameObject enemySelector;
+    [SerializeField] GameObject allySelector;
     [SerializeField] GameObject itemSelector;
     [SerializeField] GameObject itemDetails;
+    [SerializeField] GameObject battleInfo;
 
     [SerializeField] List<Text> actionTexts;
     [SerializeField] List<Text> skillText;
 
     [SerializeField] List<BattleUnit> enemyImages;
+    [SerializeField] List<BattleUnit> allyImages;
 
     [SerializeField] Text descriptionText;
     [SerializeField] Text cooldownText;
@@ -28,10 +31,13 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] Text itemName;
     [SerializeField] Text itemDescription;
 
+    [SerializeField] Text battleInfoText;
+
     public List<BattleUnit> EnemyImages { get => enemyImages; set => enemyImages = value; }
     public List<BattleItem> BattleItems { get => battleItems; set => battleItems = value; }
     public List<Text> ActionTexts { get => actionTexts; set => actionTexts = value; }
     public List<Text> SkillText { get => skillText; set => skillText = value; }
+    public List<BattleUnit> AllyImages { get => allyImages; set => allyImages = value; }
 
     public void EnableActionSelector(bool enabled)
     {
@@ -58,6 +64,11 @@ public class BattleDialogBox : MonoBehaviour
         enemySelector.SetActive(enabled);
     }
 
+    public void EnableAllySelector(bool enabled)
+    {
+        allySelector.SetActive(enabled);
+    }
+
     public void EnableItemSelector(bool enabled)
     {
         itemSelector.SetActive(enabled);
@@ -78,7 +89,7 @@ public class BattleDialogBox : MonoBehaviour
             }
             else
             {
-                ActionTexts[i].color = Color.black;
+                ActionTexts[i].color = new Color32(200,200,200, 255);
             }
         }
     }
@@ -93,7 +104,7 @@ public class BattleDialogBox : MonoBehaviour
             }
             else
             {
-                SkillText[i].color = Color.black;
+                SkillText[i].color = new Color32(200, 200, 200, 255);
             }
         }
 
@@ -114,6 +125,24 @@ public class BattleDialogBox : MonoBehaviour
             {
                 enemyImages[i].GetComponent<Image>().color = new Color(enemyImages[i].GetComponent<Image>().color.r, 
                     enemyImages[i].GetComponent<Image>().color.g, enemyImages[i].GetComponent<Image>().color.b, 1f);
+            }
+        }
+
+    }
+
+    public void UpdateAllySelection(int selectedAlly)
+    {
+        for (int i = 0; i < allyImages.Count; i++)
+        {
+            if (i == selectedAlly)
+            {
+                allyImages[i].GetComponent<Image>().color = new Color(allyImages[i].GetComponent<Image>().color.r,
+                    allyImages[i].GetComponent<Image>().color.g, allyImages[i].GetComponent<Image>().color.b, 0.5f);
+            }
+            else if (allyImages[i].GetComponent<Image>().color != Color.clear)
+            {
+                allyImages[i].GetComponent<Image>().color = new Color(allyImages[i].GetComponent<Image>().color.r,
+                    allyImages[i].GetComponent<Image>().color.g, allyImages[i].GetComponent<Image>().color.b, 1f);
             }
         }
 
@@ -156,9 +185,19 @@ public class BattleDialogBox : MonoBehaviour
                 enemyImages[i].SetupMenu(enemies[i].Character);
             else
                 enemyImages[i].SetupMenu(null);
-
         }
+    }
 
+    public void SetAllyImages(List<BattleUnit> allies)
+    {
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (i < allies.Count)
+                allyImages[i].SetupMenu(allies[i].Character);
+            else
+                allyImages[i].SetupMenu(null);
+        }
 
     }
 
@@ -168,5 +207,10 @@ public class BattleDialogBox : MonoBehaviour
         {
             bi.QuantityTxt.text = "x" + bi.Items.Count.ToString();
         }
+    }
+
+    public void ShowBattleInfo(string text)
+    {
+        battleInfoText.text = text;
     }
 }

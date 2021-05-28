@@ -13,10 +13,9 @@ public class ConditionsDB
         {
              Name = "Poison",
              StartMessage = "has been poisoned",
-             OnStart = (BattleUnit battleUnit) =>
+             OnStart = (BattleUnit battleUnit, int minTurns, int maxTurns) =>
              {
-                 //Stun for 1-2 turns
-                 battleUnit.Character.PoisonTime = Random.Range(1,4);
+                 battleUnit.Character.PoisonTime = Random.Range(minTurns,maxTurns);
                  battleUnit.ShowPoison(true);
                  Debug.Log($"Poison for {battleUnit.Character.PoisonTime} turns");
              },
@@ -43,10 +42,9 @@ public class ConditionsDB
         {
              Name = "Stun",
              StartMessage = "has been stunned",
-             OnStart = (BattleUnit battleUnit) =>
+             OnStart = (BattleUnit battleUnit, int minTurns, int maxTurns) =>
              {
-                 //Stun for 1-2 turns
-                 battleUnit.Character.StunTime = Random.Range(1,3);
+                 battleUnit.Character.StunTime = Random.Range(minTurns,maxTurns);
                  battleUnit.ShowStun(true);
                  Debug.Log($"Stunned for {battleUnit.Character.StunTime} turns");
              },
@@ -64,6 +62,31 @@ public class ConditionsDB
                  return false;
              }
         }
+        },
+        {ConditionID.tnk,
+        new Condition()
+        {
+             Name = "Taunt",
+             StartMessage = "has taunted enemy team",
+             OnStart = (BattleUnit battleUnit, int minTurns, int maxTurns) =>
+             { 
+                 battleUnit.Character.TauntTime = Random.Range(minTurns,maxTurns);
+                 Debug.Log($"Taunt for {battleUnit.Character.TauntTime} turns");
+             },
+             OnBeforeTurn = (BattleUnit battleUnit) =>
+             {
+                 if(battleUnit.Character.TauntTime <= 0)
+                 {
+                     battleUnit.Character.CureStatus(ConditionID.tnk);
+                 }
+                 else
+                 {
+                     battleUnit.Character.TauntTime--;
+                 }
+
+
+             }
+        }
         }
     };
 
@@ -72,5 +95,5 @@ public class ConditionsDB
 
 public enum ConditionID
 {
-    none, psn, stn
+    none, psn, stn, tnk
 }

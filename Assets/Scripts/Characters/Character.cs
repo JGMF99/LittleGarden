@@ -24,6 +24,7 @@ public class Character
     private List<Condition> status = new List<Condition>();
     private int poisonTime;
     private int stunTime;
+    private int tauntTime;
 
     public List<Skill> Skills { get; set; }
 
@@ -119,14 +120,14 @@ public class Character
         }
     }
 
-    public void AddStatus(ConditionID conditionID, BattleUnit battleUnit)
+    public void AddStatus(ConditionID conditionID, BattleUnit battleUnit, int minTurns, int maxTurns)
     {
 
         if (Status.Contains(ConditionsDB.Conditions[conditionID]))
             Status.Remove(ConditionsDB.Conditions[conditionID]);
 
         Status.Add(ConditionsDB.Conditions[conditionID]);
-        Status.Last()?.OnStart?.Invoke(battleUnit);
+        Status.Last()?.OnStart?.Invoke(battleUnit, minTurns, maxTurns);
     }
 
     public void CureStatus(ConditionID conditionID)
@@ -171,6 +172,7 @@ public class Character
     public List<Condition> Status { get => status; set => status = value; }
     public int PoisonTime { get => poisonTime; set => poisonTime = value; }
     public int StunTime { get => stunTime; set => stunTime = value; }
+    public int TauntTime { get => tauntTime; set => tauntTime = value; }
 
     public bool CheckForLevelUp()
     {
@@ -194,6 +196,18 @@ public class Character
     public void LearnSkill(LearnableSkill skillToLearn)
     {
         Skills.Add(new Skill(skillToLearn.SkillBase));
+    }
+
+    public void Heal(Skill skill, Character healer)
+    {
+
+        float modifiers = Random.Range(0.85f, 1f);
+        float a = (2 * healer.Level + 10) / 250f;
+        float d = a * skill.Base.Damage * ((float)healer.Defense / Defense) + 2;
+        int damage = Mathf.FloorToInt(d * modifiers);
+
+        UpdateHP(-damage);
+
     }
 
     public void TakeDamage(Skill skill, Character attacker, bool isPlayerUnit)
@@ -222,11 +236,12 @@ public class Character
             if (s.CurrentTurnCooldown > 0)
                 s.CurrentTurnCooldown--;
 
-        foreach(Condition c in Status)
+        for (var i = Status.Count - 1; i >= 0; i--)
+            Status[i].OnBeforeTurn?.Invoke(battleUnit);
+
+        foreach (Condition c in Status)
             if(c?.OnBeforeMove != null)
-            {
                 return c.OnBeforeMove(battleUnit);
-            }
 
         return true;
     }
@@ -234,7 +249,7 @@ public class Character
     public void OnAfterTurn(BattleUnit battleUnit)
     {
         for(var i = Status.Count - 1; i >= 0; i--)
-            Status[i].OnAfterTurn?.Invoke(battleUnit);
+            Status[i].OnAfterTurn?.Invoke(battleUnit);     
             
     }
 

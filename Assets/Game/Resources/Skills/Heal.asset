@@ -17,10 +17,13 @@ MonoBehaviour:
   damage: 20
   accuracy: 0
   alwaysHits: 1
-  turnsCooldown: 0
+  turnsCooldown: 1
+  minTurns: 0
+  maxTurns: 0
   position: 0
   category: 0
+  area: 0
   effects:
     boosts: []
     status: 0
-  target: 1
+  target: 0

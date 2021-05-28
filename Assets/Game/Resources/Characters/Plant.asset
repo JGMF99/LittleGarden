@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18e35fd452d1a449acb8158c5f4fdf9, type: 3}
+  m_Name: Plant
+  m_EditorClassIdentifier: 
+  name: Plant
+  description: 
+  frontSprite: {fileID: 21300000, guid: 035f1c061b8bc2c41a76e041eab4a167, type: 3}
+  sideSprite: {fileID: 21300000, guid: 035f1c061b8bc2c41a76e041eab4a167, type: 3}
+  specie: 6
+  maxHp: 80
+  attack: 15
+  defense: 10
+  speed: 10
+  expYield: 50
+  growthRate: 1
+  learnableSkills:
+  - skillBase: {fileID: 11400000, guid: f2d66fb72dc97444f984006cc5bfc72f, type: 2}
+    level: 1
+  - skillBase: {fileID: 11400000, guid: 5846636197c4188408cbf469d2776802, type: 2}
+    level: 2
+  - skillBase: {fileID: 11400000, guid: 8c2569a464b21e943bef1be6ce531047, type: 2}
+    level: 3
+  - skillBase: {fileID: 11400000, guid: f1d5a5fe0acda964d8b95aa89d6055ed, type: 2}
+    level: 4

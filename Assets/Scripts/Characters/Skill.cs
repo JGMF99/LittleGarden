@@ -51,4 +51,20 @@ public class Skill
 
         return isValid && CurrentTurnCooldown == 0;
     }
+
+    public string GetReason(BattleUnit unit)
+    {
+        if (currentTurnCooldown > 0)
+            return "Skill is on cooldown";
+
+        if (unit.IsPlayerUnit)
+        {
+            if (!(unit.Character.Position % 2 == 0 && Base.Position == SkillPosition.BackRow))
+                return "Skill is only available in front row";
+            else if (!(unit.Character.Position % 2 == 1 && Base.Position == SkillPosition.FrontRow))
+                return "Skill is only available in back row";
+        }
+
+        return "";
+    }
 }

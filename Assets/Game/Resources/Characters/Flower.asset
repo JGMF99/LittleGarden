@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18e35fd452d1a449acb8158c5f4fdf9, type: 3}
+  m_Name: Flower
+  m_EditorClassIdentifier: 
+  name: Flower
+  description: 
+  frontSprite: {fileID: 21300000, guid: a13071d2a77203547bda9f41a1d205ac, type: 3}
+  sideSprite: {fileID: 21300000, guid: a13071d2a77203547bda9f41a1d205ac, type: 3}
+  specie: 7
+  maxHp: 120
+  attack: 5
+  defense: 20
+  speed: 5
+  expYield: 80
+  growthRate: 0
+  learnableSkills:
+  - skillBase: {fileID: 11400000, guid: 42b895ef5b137754eb0998f808191349, type: 2}
+    level: 1
+  - skillBase: {fileID: 11400000, guid: d335748a40d991344a72f4b724da36c4, type: 2}
+    level: 2
+  - skillBase: {fileID: 11400000, guid: 65ab16917c5bdb54ca0bfdae8d500816, type: 2}
+    level: 2
+  - skillBase: {fileID: 11400000, guid: bb6bc64d993543b4b96a393b7cb642f3, type: 2}
+    level: 3

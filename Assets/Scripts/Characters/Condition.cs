@@ -14,9 +14,11 @@ public class Condition
     public string Description { get => description; set => description = value; }
     public string StartMessage { get => startMessage; set => startMessage = value; }
 
-    public Action<BattleUnit> OnStart { get; set; }
+    public Action<BattleUnit, int, int> OnStart { get; set; }
 
     public Func<BattleUnit, bool> OnBeforeMove { get; set; }
+
+    public Action<BattleUnit> OnBeforeTurn { get; set; }
 
     public Action<BattleUnit> OnAfterTurn { get; set; }
 }

@@ -13,16 +13,19 @@ MonoBehaviour:
   m_Name: Super Strength
   m_EditorClassIdentifier: 
   name: Super Strength
-  description: Bonus damage for some turns
+  description: Bonus damage for this battle
   damage: 0
   accuracy: 100
   alwaysHits: 1
-  turnsCooldown: 1
+  turnsCooldown: 2
+  minTurns: 0
+  maxTurns: 0
   position: 2
   category: 1
+  area: 0
   effects:
     boosts:
     - stat: 0
-      boost: 1
+      boost: 2
     status: 0
-  target: 1
+  target: 2

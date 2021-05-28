@@ -56,6 +56,7 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Gameplay\ShopPanel.cs" />
     <Compile Include="Assets\Scripts\Characters\SkillBase.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Recruitment.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Interactable.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Assets\Scripts\Inventory\EquipmentMenu.cs" />
     <Compile Include="Assets\Scripts\Gameplay\QuestGiver.cs" />
     <Compile Include="Assets\Scripts\Characters\Skill.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Shopper.cs" />
     <Compile Include="Assets\Scripts\Inventory\ItemBase.cs" />
     <Compile Include="Assets\Scripts\Data\ConditionsDB.cs" />
     <Compile Include="Assets\Scripts\Gameplay\RecruitmentCompleted.cs" />
@@ -102,9 +104,8 @@
     <Compile Include="Assets\Scripts\Gameplay\Quest.cs" />
     <Compile Include="Assets\Scripts\Inventory\PartyMember.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Recruiting.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Shopper.cs" />
     <Compile Include="Assets\Scripts\Gameplay\SellingItem.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\ShopPanel.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Boss.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

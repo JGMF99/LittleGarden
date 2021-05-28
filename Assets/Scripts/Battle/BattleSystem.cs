@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public enum BattleState
 {
-    Start, PlayerAction, PlayerSkill, TargetEnemy, PlayerPosition, PlayerItem, EnemyMove, Busy
+    Start, PlayerAction, PlayerSkill, TargetEnemy, TargetAlly, PlayerPosition, PlayerItem, EnemyMove, Busy
 }
 
 public class BattleSystem : MonoBehaviour
@@ -18,6 +18,7 @@ public class BattleSystem : MonoBehaviour
     BattleUnit playerUnit;
     [SerializeField] List<BattleUnit> playerGrid;
     BattleUnit enemyUnit;
+    BattleUnit skillTarget;
     [SerializeField] List<BattleUnit> enemyGrid;
 
     [SerializeField] BattleDialogBox dialogBox;
@@ -81,8 +82,6 @@ public class BattleSystem : MonoBehaviour
             playerUnits.Add(playerGrid[c.Position]);
         }
 
-        //TODO - Player stats
-
         foreach (var e in enemies.Team)
         {
             enemyGrid[e.Position].Setup(e);
@@ -112,7 +111,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return null;
 
-        DecideNextTurn();
+        StartCoroutine(DecideNextTurn());
 
     }
 
@@ -135,7 +134,7 @@ public class BattleSystem : MonoBehaviour
             
     }
 
-    void DecideNextTurn()
+    IEnumerator DecideNextTurn()
     {
         nextTurn = turnsQueue[0];
 
@@ -151,8 +150,6 @@ public class BattleSystem : MonoBehaviour
                 var i2 = i;
                 if (i < nextTurn.Character.Skills.Count)
                     dialogBox.SkillText[i].GetComponent<Button>().onClick.AddListener(() => DecideWhatToDoSkill(nextTurn.Character.Skills[i2], nextTurn));
-                else
-                    dialogBox.SkillText[i].GetComponent<Button>().onClick.AddListener(() => DecideWhatToDoSkill(null, nextTurn));
             }
 
             dialogBox.SetEnemyImages(enemyUnits);
@@ -161,20 +158,60 @@ public class BattleSystem : MonoBehaviour
                 dialogBox.EnemyImages[i].GetComponent<Button>().onClick.RemoveAllListeners();
                 var i2 = i;
                 if (i < enemyUnits.Count)
-                    dialogBox.EnemyImages[i].GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetEnemy(enemyUnits[i2]));
-                else
-                    dialogBox.EnemyImages[i].GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetEnemy(null));
+                    dialogBox.EnemyImages[i].GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetSkill(enemyUnits[i2]));
             }
 
+            dialogBox.SetAllyImages(playerUnits);
+
             dialogBox.SetItemsMenu();
-            playerUnit = nextTurn;
-            PlayerAction();
+
+            dialogBox.ShowBattleInfo($"Friendly {nextTurn.Character.Base.Name} turn");
+            yield return new WaitForSeconds(1f);
+
+            //Reduce all cooldowns and status turns
+            bool canRunMove = nextTurn.Character.OnBeforeMove(nextTurn);
+
+            if (canRunMove)
+            {
+                playerUnit = nextTurn;
+                PlayerAction();
+            }
+            else
+            {
+                dialogBox.ShowBattleInfo($"Friendly {nextTurn.Character.Base.Name} can't move");
+                yield return new WaitForSeconds(2f);
+                CheckPoisonEffect(nextTurn);
+
+                StartCoroutine(DecideNextTurn());
+            }
+
+            
         }
         else
         {
             dialogBox.EnableActionSelector(false);
-            enemyUnit = nextTurn;
-            StartCoroutine(EnemyMove());
+            dialogBox.ShowBattleInfo($"Enemy {nextTurn.Character.Base.Name} turn");
+            yield return new WaitForSeconds(1f);
+
+            //Reduce all cooldowns and status turns
+            bool canRunMove = nextTurn.Character.OnBeforeMove(nextTurn);
+
+            if (canRunMove)
+            {
+                enemyUnit = nextTurn;
+                StartCoroutine(EnemyMove());
+            }
+            else
+            {
+                dialogBox.ShowBattleInfo($"Enemy {nextTurn.Character.Base.Name} can't move");
+                yield return new WaitForSeconds(2f);
+
+                CheckPoisonEffect(nextTurn);
+
+                StartCoroutine(DecideNextTurn());
+            }
+
+            
         }
     }
 
@@ -197,7 +234,7 @@ public class BattleSystem : MonoBehaviour
         currentSkill = 0;
     }
 
-    void RunAway()
+    public IEnumerator RunAwayCouroutine()
     {
         state = BattleState.Busy;
 
@@ -205,11 +242,26 @@ public class BattleSystem : MonoBehaviour
 
         if (runSuccessful)
         {
+            dialogBox.ShowBattleInfo($"Run away successfully");
+
+            yield return new WaitForSeconds(2f);
+
             team.Team.ForEach(c => c.OnBattleOver());
             OnBattleOver(false, enemies, recruitment);
-        }  
+        }
         else
-            DecideNextTurn();
+        {
+            dialogBox.ShowBattleInfo($"Could not run away");
+            yield return new WaitForSeconds(2f);
+            StartCoroutine(DecideNextTurn());
+        }
+    }
+
+    void RunAway()
+    {
+        dialogBox.EnableActionSelector(false);
+
+        StartCoroutine(RunAwayCouroutine());
 
     }
 
@@ -224,11 +276,32 @@ public class BattleSystem : MonoBehaviour
         currentTarget = 0;
     }
 
+    void TargetAlly()
+    {
+        state = BattleState.TargetAlly;
+
+        dialogBox.EnableSkillSelector(false);
+        dialogBox.EnableSkillDetails(false);
+        dialogBox.EnableAllySelector(true);
+
+        currentTarget = 0;
+    }
+
     void PlayerPosition()
     {
         state = BattleState.PlayerPosition;
 
         dialogBox.EnableActionSelector(false);
+
+        int position = 0;
+        foreach (BattleUnit bu in playerGrid)
+        {
+            bu.GetComponent<Button>().onClick.RemoveAllListeners();
+            var positionFinal = position;
+            if(bu.Character == null || bu.Character.Position != playerUnit.Character.Position)
+                bu.GetComponent<Button>().onClick.AddListener(() => StartCoroutine(SwitchPositions(positionFinal)));
+            position++;
+        }
 
         if (playerUnit.Character.Position != 0)
             currentPosition = 0;
@@ -251,27 +324,44 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.Busy;
 
-        yield return new WaitForSeconds(1f);
-
-        yield return RunSkill(playerUnit, enemyUnit, skill);
-
-        yield return new WaitForSeconds(1f);
+        if (skill.Base.Area == SkillArea.Single)
+            yield return RunSkill(playerUnit, skillTarget, skill);
+        else
+            yield return RunAoESkill(playerUnit, skill);
 
         yield return CheckPoisonEffect(playerUnit);
 
         if (playerUnits.Count == 0)
         {
+            dialogBox.ShowBattleInfo($"Battle has been lost");
+
+            yield return new WaitForSeconds(2f);
+
             team.Team.ForEach(c => c.OnBattleOver());
             OnBattleOver(false, enemies, recruitment);
         }else if(enemyUnits.Count == 0)
         {
+            dialogBox.ShowBattleInfo($"Battle has been won");
+
+            yield return new WaitForSeconds(2f);
+
             team.Team.ForEach(c => c.OnBattleOver());
             OnBattleOver(true, enemies, recruitment);
         }
         else
         {
-            DecideNextTurn();
+            StartCoroutine(DecideNextTurn());
         }
+    }
+
+    public BattleUnit GetRandomEnemy()
+    {
+        foreach(BattleUnit bu in playerUnits)
+        {
+            if (bu.Character.TauntTime > 0)
+                return bu;
+        }
+        return playerUnits[Random.Range(0, playerUnits.Count)];
     }
 
     IEnumerator EnemyMove()
@@ -282,54 +372,76 @@ public class BattleSystem : MonoBehaviour
 
         var skill = enemyUnit.Character.GetRandomSkill(enemyUnit);
 
-        var playerUnitAttacked = playerUnits[Random.Range(0, playerUnits.Count)];
+        BattleUnit targetUnit;
 
-        yield return new WaitForSeconds(3f);
+        if (skill.Base.Target == SkillTarget.FoeEnemy)
+            targetUnit = GetRandomEnemy();
+        else if (skill.Base.Target == SkillTarget.FoeAlly)
+            targetUnit = enemyUnits[Random.Range(0, enemyUnits.Count)];
+        else
+            targetUnit = enemyUnit;
 
-        yield return RunSkill(enemyUnit, playerUnitAttacked, skill);
-
-        yield return new WaitForSeconds(1f);
+        if (skill.Base.Area == SkillArea.Single)
+            yield return RunSkill(enemyUnit, targetUnit, skill);
+        else
+            yield return RunAoESkill(enemyUnit, skill);
 
         yield return CheckPoisonEffect(enemyUnit);
 
         if (playerUnits.Count == 0)
         {
+            dialogBox.ShowBattleInfo($"Battle has been lost");
+
+            yield return new WaitForSeconds(2f);
+
             team.Team.ForEach(c => c.OnBattleOver());
             OnBattleOver(false, enemies, recruitment);
         }
         else if (enemyUnits.Count == 0)
         {
+            dialogBox.ShowBattleInfo($"Battle has been won");
+
+            yield return new WaitForSeconds(2f);
+
             team.Team.ForEach(c => c.OnBattleOver());
             OnBattleOver(true, enemies, recruitment);
         }else
         {
-            DecideNextTurn();
+            StartCoroutine(DecideNextTurn());
         }
 
     }
 
+
     IEnumerator RunSkill(BattleUnit sourceUnit, BattleUnit targetUnit, Skill skill)
     {
+        dialogBox.ShowBattleInfo($"{sourceUnit.Character.Base.Name} used {skill.Base.Name}");
 
-        //Reduce all cooldowns and status turns
-        bool canRunMove = sourceUnit.Character.OnBeforeMove(sourceUnit);
+        yield return new WaitForSeconds(2f);
 
         //Put cooldown on skill
         skill.PutCooldown();
 
-        if (!canRunMove)
-            yield break;
-
         if (!CheckIfSkillHits(skill, sourceUnit.Character, targetUnit.Character))
+        {
+            dialogBox.ShowBattleInfo($"{targetUnit.Character.Base.Name} dodged {skill.Base.Name}");
+            yield return new WaitForSeconds(2f);
             yield break;
+        }
+            
         
         if (skill.Base.Category == SkillCategory.Status)
         {
             yield return RunSkillEffect(skill, sourceUnit, targetUnit);
+        }else if(skill.Base.Category == SkillCategory.Heal)
+        {
+            targetUnit.Character.Heal(skill, sourceUnit.Character);
+
+            targetUnit.UpdateHP();
         }
         else
         {
-            targetUnit.Character.TakeDamage(skill, sourceUnit.Character, false);
+            targetUnit.Character.TakeDamage(skill, sourceUnit.Character, targetUnit.IsPlayerUnit);
 
             targetUnit.UpdateHP();
         }
@@ -350,10 +462,81 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    IEnumerator RunAoESkill(BattleUnit sourceUnit, Skill skill)
+    {
+        dialogBox.ShowBattleInfo($"{sourceUnit.Character.Base.Name} used {skill.Base.Name}");
+
+        yield return new WaitForSeconds(2f);
+
+        //Put cooldown on skill
+        skill.PutCooldown();
+
+        List<BattleUnit> targetUnits;
+
+        if ((skill.Base.Target == SkillTarget.FoeAlly && sourceUnit.IsPlayerUnit) || skill.Base.Target == SkillTarget.FoeEnemy && !sourceUnit.IsPlayerUnit)
+            targetUnits = playerUnits;
+        else
+            targetUnits = enemyUnits;    
+
+        /*if (!CheckIfSkillHits(skill, sourceUnit.Character, targetUnit.Character))
+        {
+            StartCoroutine(dialogBox.ShowBattleInfo($"{targetUnit.Character.Base.Name} dodged {skill.Base.Name}"));
+            yield break;
+        }*/
+
+
+        foreach(BattleUnit targetUnit in targetUnits)
+        {
+            if (skill.Base.Category == SkillCategory.Status)
+            {
+                yield return RunSkillEffect(skill, sourceUnit, targetUnit);
+            }
+            else if (skill.Base.Category == SkillCategory.Heal)
+            {
+                targetUnit.Character.Heal(skill, sourceUnit.Character);
+
+                targetUnit.UpdateHP();
+            }
+            else
+            {
+                targetUnit.Character.TakeDamage(skill, sourceUnit.Character, targetUnit.IsPlayerUnit);
+
+                targetUnit.UpdateHP();
+            }
+        }
+
+
+
+        foreach (BattleUnit targetUnit in targetUnits)
+        {
+            if (targetUnit != null && targetUnit.Character.HP <= 0)
+            {
+                yield return CharacterDied(targetUnit);
+
+                yield return new WaitForSeconds(2f);
+
+                if (!targetUnit.IsPlayerUnit)
+                {
+                    yield return GainExperience(targetUnit);
+                }
+
+            }
+        }
+
+            
+    }
+
     IEnumerator CheckPoisonEffect(BattleUnit sourceUnit)
     {
         //------------ Poison effect ----------------
+        if(sourceUnit.Character.PoisonTime > 0)
+        {
+            dialogBox.ShowBattleInfo($"{sourceUnit.Character.Base.Name} suffered poison damage");
+            yield return new WaitForSeconds(2f);
+        }
+        
         sourceUnit.Character.OnAfterTurn(sourceUnit);
+
 
         sourceUnit.UpdateHP();
 
@@ -379,16 +562,26 @@ public class BattleSystem : MonoBehaviour
         //Stat boosting
         if (effects.Boosts != null)
         {
+
             if (skill.Base.Target == SkillTarget.Self)
+            {
                 sourceUnit.Character.ApplyBoosts(effects.Boosts);
+            }
+
             else
+            {
                 targetUnit.Character.ApplyBoosts(effects.Boosts);
+            }
+                
         }
 
         //Status Condition
         if(effects.Status != ConditionID.none)
         {
-            targetUnit.Character.AddStatus(effects.Status, targetUnit);
+            dialogBox.ShowBattleInfo($"{targetUnit.Character.Base.Name} {ConditionsDB.Conditions[effects.Status].StartMessage}");
+            targetUnit.Character.AddStatus(effects.Status, targetUnit, skill.Base.MinTurns, skill.Base.MaxTurns);
+
+            yield return new WaitForSeconds(2f);
         }
 
         yield return null;
@@ -400,6 +593,10 @@ public class BattleSystem : MonoBehaviour
             Debug.Log($"{unitDied.Character.Base.Name} player has died");
         else
             Debug.Log($"{unitDied.Character.Base.Name} enemy has died");
+
+        dialogBox.ShowBattleInfo($"{unitDied.Character.Base.Name} died");
+
+        yield return new WaitForSeconds(2f);
 
         yield return new WaitForSeconds(2f);
 
@@ -441,6 +638,9 @@ public class BattleSystem : MonoBehaviour
 
                 if (newSkill != null)
                     bu.Character.LearnSkill(newSkill);
+
+                dialogBox.ShowBattleInfo($"{bu.Character.Base.Name} leveled up to level {bu.Character.Level}");
+                yield return new WaitForSeconds(0.5f);
             }
         }
 
@@ -457,16 +657,18 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-    IEnumerator SwitchPositions()
+    IEnumerator SwitchPositions(int newPosition)
     {
         state = BattleState.Busy;
 
-        //Reduce all cooldowns and status turns
-        bool canRunMove = playerUnit.Character.OnBeforeMove(playerUnit);
+        foreach (BattleUnit pu in playerGrid)
+        {
+            pu.GetComponent<Button>().onClick.RemoveAllListeners();
+        }
 
         var oldPosition = playerUnit.Character.Position;
 
-        playerGrid[oldPosition].Swap(playerGrid[currentPosition], currentPosition);
+        playerGrid[oldPosition].Swap(playerGrid[newPosition], newPosition);
 
         foreach (var pu in playerGrid)
         {
@@ -476,54 +678,56 @@ public class BattleSystem : MonoBehaviour
         if (playerGrid[oldPosition].Character == null)
         {
             playerUnits.Remove(playerGrid[oldPosition]);
-            playerUnits.Add(playerGrid[currentPosition]);
+            playerUnits.Add(playerGrid[newPosition]);
 
             turnsQueue.Remove(playerGrid[oldPosition]);
-            turnsQueue.Add(playerGrid[currentPosition]);
+            turnsQueue.Add(playerGrid[newPosition]);
+
+            dialogBox.ShowBattleInfo($"{playerGrid[newPosition].Character.Base.Name} has changed position");
+            yield return new WaitForSeconds(2f);
 
         }
         else
         {
-            turnsQueue = Swap(turnsQueue, turnsQueue.IndexOf(playerGrid[currentPosition]), turnsQueue.IndexOf(playerGrid[oldPosition]));
+            turnsQueue = Swap(turnsQueue, turnsQueue.IndexOf(playerGrid[newPosition]), turnsQueue.IndexOf(playerGrid[oldPosition]));
+
+            dialogBox.ShowBattleInfo($"{playerGrid[newPosition].Character.Base.Name} has swapped position with {playerGrid[oldPosition].Character.Base.Name}");
+            yield return new WaitForSeconds(2f);
         }
 
 
-        yield return new WaitForSeconds(1f);
+        yield return CheckPoisonEffect(playerGrid[newPosition]);
 
-        yield return CheckPoisonEffect(playerGrid[currentPosition]);
-
-        yield return new WaitForSeconds(1f);
-
-        DecideNextTurn();
+        StartCoroutine(DecideNextTurn());
     }
 
     IEnumerator UseItem(BattleItem bi)
     {
         Debug.Log("Use Item");
-        state = BattleState.Busy;
+        if(dialogBox.BattleItems[currentItem].Items.Count > 0)
+        {
+            state = BattleState.Busy;
 
-        //Reduce all cooldowns and status turns
-        bool canRunMove = playerUnit.Character.OnBeforeMove(playerUnit);
+            Item item = bi.Items.Last();
 
-        Item item = bi.Items.Last();
+            playerItems.Remove(item);
 
-        playerItems.Remove(item);
+            playerUnit.Character.ApplyItem(item);
 
-        playerUnit.Character.ApplyItem(item);
+            bi.Items.Remove(item);
 
-        bi.Items.Remove(item);
+            playerUnit.UpdateHP();
 
-        playerUnit.UpdateHP();
+            dialogBox.ShowBattleInfo($"{playerUnit.Character.Base.Name} used {item.Base.Name}");
+            yield return new WaitForSeconds(2f);
 
-        yield return new WaitForSeconds(2f);
+            yield return CheckPoisonEffect(playerUnit);
 
-        yield return CheckPoisonEffect(playerUnit);
-
-        yield return new WaitForSeconds(1f);
-
-        dialogBox.EnableItemDetails(false);
-        dialogBox.EnableItemSelector(false);
-        DecideNextTurn();
+            dialogBox.EnableItemDetails(false);
+            dialogBox.EnableItemSelector(false);
+            StartCoroutine(DecideNextTurn());
+        }
+        
     }
 
     public void HandleUpdate()
@@ -544,7 +748,12 @@ public class BattleSystem : MonoBehaviour
         else if (state == BattleState.TargetEnemy)
         {
             HandleTargetEnemy();
-        }else if(state == BattleState.PlayerPosition)
+        }
+        else if (state == BattleState.TargetAlly)
+        {
+            HandleTargetAlly();
+        }
+        else if(state == BattleState.PlayerPosition)
         {
             HandlePlayerPosition();
         }else if(state == BattleState.PlayerItem)
@@ -576,19 +785,19 @@ public class BattleSystem : MonoBehaviour
     void HandleActionSelection()
     {
 
-        if (Input.GetKeyDown(KeyCode.D) && currentAction < 3)
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentAction < 3)
         {
             ++currentAction;
         }
-        else if (Input.GetKeyDown(KeyCode.A) && currentAction > 0)
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentAction > 0)
         {
             --currentAction;
         }
-        else if (Input.GetKeyDown(KeyCode.S) && currentAction < 2)
+        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && currentAction < 2)
         {
             currentAction += 2;
         }
-        else if (Input.GetKeyDown(KeyCode.W) && currentAction > 1)
+        else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && currentAction > 1)
         {
             currentAction -= 2;
         }
@@ -617,19 +826,19 @@ public class BattleSystem : MonoBehaviour
 
     void HandleSkillSelection()
     {
-        if (Input.GetKeyDown(KeyCode.D) && currentSkill < playerUnit.Character.Skills.Count - 1)
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentSkill < playerUnit.Character.Skills.Count - 1)
         {
             ++currentSkill;
         }
-        else if (Input.GetKeyDown(KeyCode.A) && currentSkill > 0)
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentSkill > 0)
         {
             --currentSkill;
         }
-        else if (Input.GetKeyDown(KeyCode.S) && currentSkill < playerUnit.Character.Skills.Count - 2)
+        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && currentSkill < playerUnit.Character.Skills.Count - 2)
         {
             currentSkill += 2;
         }
-        else if (Input.GetKeyDown(KeyCode.W) && currentSkill > 1)
+        else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && currentSkill > 1)
         {
             currentSkill -= 2;
         }
@@ -655,29 +864,61 @@ public class BattleSystem : MonoBehaviour
         Debug.Log("DecideWhatToDoSkill");
         if(skill != null && skill.IsValid(battleUnit))
         {
-            if (skill.Base.Target == SkillTarget.Foe)
+            if (skill.Base.Target == SkillTarget.FoeEnemy && skill.Base.Area == SkillArea.Single)
             {
                 selectedSkill = skill;
+
+                foreach(BattleUnit bu in enemyGrid)
+                {
+                    bu.GetComponent<Button>().onClick.RemoveAllListeners();
+                    if (bu.Character != null)
+                    {
+                        bu.GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetSkill(bu));
+                    }     
+                }
+
                 TargetEnemy();
-            } 
+            }else if(skill.Base.Target == SkillTarget.FoeAlly && skill.Base.Area == SkillArea.Single)
+            {
+                selectedSkill = skill;
+
+                foreach (BattleUnit bu in playerGrid)
+                {
+                    bu.GetComponent<Button>().onClick.RemoveAllListeners();
+                    if (bu.Character != null)
+                    {
+                        bu.GetComponent<Button>().onClick.AddListener(() => WhatToDoTargetSkill(bu));
+                    }
+                }
+
+                TargetAlly();
+            }
             else
             {
                 dialogBox.EnableSkillSelector(false);
                 dialogBox.EnableSkillDetails(false);
 
+                if (skill.Base.Target == SkillTarget.Self)
+                    skillTarget = battleUnit;
+
                 StartCoroutine(PerformPlayerSkill(skill));
             }
+        }
+        else
+        {
+            dialogBox.ShowBattleInfo($"{skill.GetReason(battleUnit)}");
+            
         }
         
     }
 
     void HandleTargetEnemy()
     {
-        if (Input.GetKeyDown(KeyCode.D) && currentTarget < enemyUnits.Count - 1)
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentTarget < enemyUnits.Count - 1)
         {
             ++currentTarget;
         }
-        else if (Input.GetKeyDown(KeyCode.A) && currentTarget > 0)
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentTarget > 0)
         {
             --currentTarget;
         }
@@ -687,24 +928,80 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
-            WhatToDoTargetEnemy(enemyUnits[currentTarget]);
+            WhatToDoTargetSkill(enemyUnits[currentTarget]);
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
         {
+            foreach (BattleUnit bu in enemyGrid)
+            {
+                bu.GetComponent<Button>().onClick.RemoveAllListeners();
+            }
+
             dialogBox.EnableEnemySelector(false);
             PlayerSkill();
         }
 
     }
 
-    public void WhatToDoTargetEnemy(BattleUnit targetUnit)
+    void HandleTargetAlly()
+    {
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentTarget < playerUnits.Count - 1)
+        {
+            ++currentTarget;
+        }
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentTarget > 0)
+        {
+            --currentTarget;
+        }
+
+        dialogBox.UpdateAllySelection(currentTarget);
+        UpdateAllySelection(currentTarget);
+
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
+        {
+            WhatToDoTargetSkill(playerUnits[currentTarget]);
+        }
+        else if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            foreach (BattleUnit bu in playerGrid)
+            {
+                bu.GetComponent<Button>().onClick.RemoveAllListeners();
+            }
+
+
+            dialogBox.EnableAllySelector(false);
+            PlayerSkill();
+        }
+
+    }
+
+    public void WhatToDoTargetSkill(BattleUnit targetUnit)
     {
         Debug.Log("WhatToDoTargetEnemy");
         if (targetUnit != null)
         {
+            foreach (BattleUnit bu in enemyGrid)
+            {
+                bu.GetComponent<Button>().onClick.RemoveAllListeners();
+            }
+            foreach (BattleUnit bu in playerGrid)
+            {
+                bu.GetComponent<Button>().onClick.RemoveAllListeners();
+            }
+
             dialogBox.EnableEnemySelector(false);
 
-            enemyUnit = targetUnit;
+            skillTarget = targetUnit;
+
+            if(selectedSkill.Base.Target == SkillTarget.FoeEnemy)
+                foreach (BattleUnit bu in enemyUnits)
+                {
+                    if (bu.Character.TauntTime > 0)
+                    {
+                        skillTarget = bu;
+                        break;
+                    }
+                }
 
             StartCoroutine(PerformPlayerSkill(selectedSkill));
         }
@@ -726,18 +1023,33 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    private void UpdateAllySelection(int currentTarget)
+    {
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            if (i == currentTarget)
+            {
+                playerGrid.Where(x => x.Character == playerUnits[i].Character).FirstOrDefault().GetComponent<Image>().color = new Color(1f, 0, 0, 0.5f);
+            }
+            else
+            {
+                playerGrid.Where(x => x.Character == playerUnits[i].Character).FirstOrDefault().GetComponent<Image>().color = new Color(1, 1, 1, 1f);
+            }
+        }
+    }
+
     void HandlePlayerPosition()
     {
 
-        if (Input.GetKeyDown(KeyCode.D) && currentPosition < playerGrid.Count - 1 && currentPosition + 1 != playerUnit.Character.Position)
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentPosition < playerGrid.Count - 1 && currentPosition + 1 != playerUnit.Character.Position)
         {
             ++currentPosition;
         }
-        else if (Input.GetKeyDown(KeyCode.A) && currentPosition > 0 && currentPosition - 1 != playerUnit.Character.Position)
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentPosition > 0 && currentPosition - 1 != playerUnit.Character.Position)
         {
             --currentPosition;
         }
-        else if (Input.GetKeyDown(KeyCode.S) && currentPosition < playerGrid.Count - 2)
+        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && currentPosition < playerGrid.Count - 2)
         {
             if(currentPosition + 2 == playerUnit.Character.Position)
             {
@@ -746,7 +1058,7 @@ public class BattleSystem : MonoBehaviour
             }else
                 currentPosition += 2;
         }
-        else if (Input.GetKeyDown(KeyCode.W) && currentPosition > 1)
+        else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && currentPosition > 1)
         {
             if (currentPosition - 2 == playerUnit.Character.Position)
             {
@@ -762,14 +1074,17 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
-            StartCoroutine(SwitchPositions());
+            StartCoroutine(SwitchPositions(currentPosition));
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            foreach (var pu in playerGrid)
+            foreach (BattleUnit pu in playerGrid)
             {
                 pu.Setup(pu.Character);
+                pu.GetComponent<Button>().onClick.RemoveAllListeners();
             }
+
+
             PlayerAction();
         }
     }
@@ -792,18 +1107,18 @@ public class BattleSystem : MonoBehaviour
 
     void HandleItemSelection()
     {
-        if (Input.GetKeyDown(KeyCode.D) && currentItem  == 0)
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentItem  == 0)
         {
             ++currentItem;
         }
-        else if (Input.GetKeyDown(KeyCode.A) && currentItem == 1)
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentItem == 1)
         {
             --currentItem;
         }
 
         dialogBox.UpdateItemSelection(currentItem);
 
-        if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M)) && dialogBox.BattleItems[currentItem].Items.Count > 0)
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
             StartCoroutine(UseItem(dialogBox.BattleItems[currentItem]));
         }

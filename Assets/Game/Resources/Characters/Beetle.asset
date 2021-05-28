@@ -23,4 +23,12 @@ MonoBehaviour:
   speed: 100
   expYield: 200
   growthRate: 1
-  learnableSkills: []
+  learnableSkills:
+  - skillBase: {fileID: 11400000, guid: 4803ad700047dd645a80e7e168348285, type: 2}
+    level: 1
+  - skillBase: {fileID: 11400000, guid: 4ce1d8cbd88345c4aa6700136d4f9c28, type: 2}
+    level: 2
+  - skillBase: {fileID: 11400000, guid: fc2c2523d7cac1c41aa641403799e1f6, type: 2}
+    level: 3
+  - skillBase: {fileID: 11400000, guid: d0c665858c6ad3c47ae64a5bb14935dc, type: 2}
+    level: 4

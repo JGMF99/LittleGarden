@@ -12,8 +12,17 @@ public class CharacterEquipment : MonoBehaviour
 
     internal void UpdateSelectedCharacterEquipment(Character character)
     {
-        helmet.Setup(character.Helmet);
-        chestplate.Setup(character.Chestplate);
-        trinket.Setup(character.Trinket);
+        if(character != null)
+        {
+            gameObject.SetActive(true);
+            helmet.Setup(character.Helmet);
+            chestplate.Setup(character.Chestplate);
+            trinket.Setup(character.Trinket);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+        
     }
 }

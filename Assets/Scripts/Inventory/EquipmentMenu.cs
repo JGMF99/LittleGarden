@@ -9,15 +9,15 @@ public class EquipmentMenu : MonoBehaviour
 
     private List<Item> items;
 
-    public void Setup(List<Item> items)
+    public void Setup(List<Item> items, int indexStart)
     {
 
         this.items = items;
 
         for(var i = 0; i < listItems.Count; i++)
         {
-            if (i < items.Count)
-                listItems[i].Setup(items[i]);
+            if (i + indexStart < items.Count)
+                listItems[i].Setup(items[i + indexStart]);
             else
                 listItems[i].Setup(null);
         }

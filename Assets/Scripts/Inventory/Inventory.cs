@@ -32,6 +32,16 @@ public class Inventory : MonoBehaviour
     [SerializeField] Text healthPotsTxt;
     [SerializeField] Text cooldownPotsTxt;
 
+    [SerializeField] Button equipmentUpArrow;
+    [SerializeField] Button equipmentDownArrow;
+    [SerializeField] Button trinketUpArrow;
+    [SerializeField] Button trinketDownArrow;
+
+    [SerializeField] Button usePotBtn;
+
+    private int equipmentIndexStart;
+    private int trinketIndexStart;
+
     public CharacterParty CharacterParty { get => characterParty; set => characterParty = value; }
 
     void Awake()
@@ -47,7 +57,16 @@ public class Inventory : MonoBehaviour
         character2btn.onClick.AddListener(() => CharacterClicked(1));
         character3btn.onClick.AddListener(() => CharacterClicked(2));
         character4btn.onClick.AddListener(() => CharacterClicked(3));
+
+        equipmentUpArrow.onClick.AddListener(OnClickEquipmentUpArrow) ;
+        equipmentDownArrow.onClick.AddListener(OnClickEquipmentDownArrow);
+        trinketUpArrow.onClick.AddListener(OnClickTrinketUpArrow);
+        trinketDownArrow.onClick.AddListener(OnClickTrinketDownArrow);
+
+        usePotBtn.onClick.AddListener(UseHealthPotion);
     }
+
+   
 
     public void Setup(CharacterParty team, List<Item> playerItems)
     {
@@ -63,10 +82,15 @@ public class Inventory : MonoBehaviour
 
         this.playerItems = playerItems;
 
+        equipmentIndexStart = 0;
+        trinketIndexStart = 0;
+
         GetNonEquippedItems();
-        bodyAndHelmetMenu.Setup(playerItemsNotEquipped);
+        bodyAndHelmetMenu.Setup(playerItemsNotEquipped, equipmentIndexStart);
         GetNonEquippedTrinkets();
-        trinketMenu.Setup(playerTrinketNotEquipped);
+        trinketMenu.Setup(playerTrinketNotEquipped, trinketIndexStart);
+
+        CheckArrows();
 
         moneyTxt.text = pc.Money.ToString();
         healthPotsTxt.text = "Health Potion x" + pc.GetItemQuantity("Health Potion").ToString();
@@ -83,9 +107,23 @@ public class Inventory : MonoBehaviour
 
         selectedCharacter = characterNo;
 
-        characterInfo.UpdateSelectedCharacter(CharacterParty.Team[characterNo]);
+        if(characterNo < CharacterParty.Team.Count)
+        {
+            characterInfo.UpdateSelectedCharacter(CharacterParty.Team[characterNo]);
 
-        characterEquipment.UpdateSelectedCharacterEquipment(CharacterParty.Team[characterNo]);
+            characterEquipment.UpdateSelectedCharacterEquipment(CharacterParty.Team[characterNo]);
+
+            usePotBtn.gameObject.SetActive(true);
+        }
+        else
+        {
+            characterInfo.UpdateSelectedCharacter(null);
+
+            characterEquipment.UpdateSelectedCharacterEquipment(null);
+
+            usePotBtn.gameObject.SetActive(false);
+        }
+        
     }
 
     private void GetNonEquippedItems()
@@ -119,9 +157,11 @@ public class Inventory : MonoBehaviour
     public void UpdateChestPieces()
     {
         GetNonEquippedItems();
-        bodyAndHelmetMenu.Setup(playerItemsNotEquipped);
+        bodyAndHelmetMenu.Setup(playerItemsNotEquipped, equipmentIndexStart);
         GetNonEquippedTrinkets();
-        trinketMenu.Setup(playerTrinketNotEquipped);
+        trinketMenu.Setup(playerTrinketNotEquipped, trinketIndexStart);
+
+        CheckArrows();
     }
 
     public void ChangeSelectedCharacterEquipment(Item item, ItemType type)
@@ -143,6 +183,68 @@ public class Inventory : MonoBehaviour
         characterInfo.UpdateSelectedCharacter(CharacterParty.Team[selectedCharacter]);
 
 
+    }
+
+    public void OnClickEquipmentUpArrow()
+    {
+        equipmentIndexStart -= 6;
+        UpdateChestPieces();
+    }
+
+    public void OnClickEquipmentDownArrow()
+    {
+        equipmentIndexStart += 6;
+        UpdateChestPieces();
+    }
+
+    public void OnClickTrinketUpArrow()
+    {
+        trinketIndexStart -= 6;
+        UpdateChestPieces();
+    }
+
+    public void OnClickTrinketDownArrow()
+    {
+        trinketIndexStart += 6;
+        UpdateChestPieces();
+    }
+
+    public void CheckArrows()
+    {
+        if (equipmentIndexStart == 0)
+            equipmentUpArrow.gameObject.SetActive(false);
+        else
+            equipmentUpArrow.gameObject.SetActive(true);
+
+        if (equipmentIndexStart + 6 < playerItemsNotEquipped.Count)
+            equipmentDownArrow.gameObject.SetActive(true);
+        else
+            equipmentDownArrow.gameObject.SetActive(false);
+
+        if (trinketIndexStart == 0)
+            trinketUpArrow.gameObject.SetActive(false);
+        else
+            trinketUpArrow.gameObject.SetActive(true);
+
+        if (trinketIndexStart + 6 < playerTrinketNotEquipped.Count)
+            trinketDownArrow.gameObject.SetActive(true);
+        else
+            trinketDownArrow.gameObject.SetActive(false);
+    }
+
+    private void UseHealthPotion()
+    {
+        if(pc.GetItemQuantity("Health Potion") > 0)
+        {
+            Item healthPot = pc.GetHealthPotion();
+
+            CharacterParty.Team[selectedCharacter].ApplyItem(healthPot);
+
+            pc.Items.Remove(healthPot);
+
+            characterInfo.UpdateSelectedCharacter(CharacterParty.Team[selectedCharacter]);
+            healthPotsTxt.text = "Health Potion x" + pc.GetItemQuantity("Health Potion").ToString();
+        }
     }
 }
 

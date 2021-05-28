@@ -73,7 +73,9 @@ public enum CharacterSpecie
     Spider,
     Beetle,
     Firefly,
-    Butterfly
+    Butterfly,
+    Plant,
+    Flower
 }
 
 public enum Stat
