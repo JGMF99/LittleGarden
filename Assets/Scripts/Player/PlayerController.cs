@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     public event Action OnEncountered;
     public event Action OnInventoryOpen;
+    public event Action OnOptionsOpen;
 
     private Animator animator;
 
@@ -106,6 +107,11 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.I))
         {
             OnInventoryOpen();
+        }
+
+        else if (Input.GetKeyDown(KeyCode.O))
+        {
+            OnOptionsOpen();
         }
 
     }

@@ -11,6 +11,8 @@ public class AudioManager : MonoBehaviour
 
 	public Sound[] sounds;
 
+	public  float currentVol = 0.5f;
+
 	void Awake()
 	{
 		if (instance != null)
@@ -38,6 +40,13 @@ public class AudioManager : MonoBehaviour
 		Play("RoamMusic");
 	}
 
+	public void ChangeVolume(float vol)
+    {
+		currentVol = vol;
+		foreach(var s in sounds)
+			s.source.volume = vol * (1f + UnityEngine.Random.Range(-s.volumeVariance / 2f, s.volumeVariance / 2f));
+	}
+
 	public void Play(string sound)
 	{
 		Sound s = Array.Find(sounds, item => item.name == sound);
@@ -47,7 +56,7 @@ public class AudioManager : MonoBehaviour
 			return;
 		}
 
-		s.source.volume = s.volume * (1f + UnityEngine.Random.Range(-s.volumeVariance / 2f, s.volumeVariance / 2f));
+		s.source.volume = currentVol * (1f + UnityEngine.Random.Range(-s.volumeVariance / 2f, s.volumeVariance / 2f));
 		s.source.pitch = s.pitch * (1f + UnityEngine.Random.Range(-s.pitchVariance / 2f, s.pitchVariance / 2f));
 
 		s.source.Play();

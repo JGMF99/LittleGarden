@@ -17,7 +17,7 @@ MonoBehaviour:
   damage: 3
   accuracy: 100
   alwaysHits: 1
-  turnsCooldown: 1
+  turnsCooldown: 2
   minTurns: 0
   maxTurns: 0
   position: 0

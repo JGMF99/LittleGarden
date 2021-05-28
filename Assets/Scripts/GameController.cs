@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 
-public enum GameState { FreeRoam, Battle, Dialog, Inventory, PopUp}
+public enum GameState { FreeRoam, Battle, Dialog, Inventory, PopUp, Options}
 public class GameController : MonoBehaviour
 {
 
@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour
         battleSystem.OnBattleOver += EndBattle;
 
         playerController.OnInventoryOpen += OpenInventory;
+        playerController.OnOptionsOpen += OpenOptions;
 
         DialogManager.Instance.OnShowDialog += () =>
         {
@@ -199,6 +200,16 @@ public class GameController : MonoBehaviour
             state = GameState.FreeRoam;
     }
 
+    private void OpenOptions()
+    {
+        bool isOpen = OptionsMenu.instance.Open();
+
+        if (isOpen)
+            state = GameState.Options;
+        else
+            state = GameState.FreeRoam;
+    }
+
     private void Update()
     {
         
@@ -214,11 +225,19 @@ public class GameController : MonoBehaviour
         else if (state == GameState.Dialog)
         {
             DialogManager.Instance.HandleUpdate();
-        }else if(state == GameState.Inventory)
+        }
+        else if(state == GameState.Inventory)
         {
             if (Input.GetKeyDown(KeyCode.I))
             {
                 OpenInventory();
+            }
+        }
+        else if (state == GameState.Options)
+        {
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                OpenOptions();
             }
         }
     }

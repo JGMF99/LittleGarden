@@ -20,7 +20,7 @@ MonoBehaviour:
   turnsCooldown: 1
   minTurns: 0
   maxTurns: 0
-  position: 1
+  position: 2
   category: 0
   area: 0
   effects:
