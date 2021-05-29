@@ -3,6 +3,9 @@ guid: 9304e1e8c988d254288e5024b0d796ab
 TextureImporter:
   internalIDToNameTable:
   - first:
+      213: 4565374125310476218
+    second: plant 3_0
+  - first:
       213: 6555560641882203201
     second: plant 3_1
   externalObjects: {}
@@ -105,6 +108,27 @@ TextureImporter:
   spriteSheet:
     serializedVersion: 2
     sprites:
+    - serializedVersion: 2
+      name: plant 3_0
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 3145
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: abff3ed14977b5f30800000000000000
+      internalID: 4565374125310476218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: plant 3_1
       rect:
