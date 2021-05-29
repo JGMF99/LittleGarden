@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Summon Ants
   description: Group of ants attacks enemy team
-  damage: 100
+  damage: 10
   accuracy: 90
   alwaysHits: 0
   turnsCooldown: 3

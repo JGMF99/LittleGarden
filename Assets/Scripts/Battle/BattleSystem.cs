@@ -508,9 +508,10 @@ public class BattleSystem : MonoBehaviour
         }
 
 
-
-        foreach (BattleUnit targetUnit in targetUnits)
+        for (var i = targetUnits.Count - 1; i >= 0; i--)
         {
+            BattleUnit targetUnit = targetUnits[i];
+
             if (targetUnit != null && targetUnit.Character.HP <= 0)
             {
                 yield return CharacterDied(targetUnit);
@@ -526,6 +527,7 @@ public class BattleSystem : MonoBehaviour
 
             }
         }
+
 
             
     }
@@ -596,12 +598,12 @@ public class BattleSystem : MonoBehaviour
     IEnumerator CharacterDied(BattleUnit unitDied)
     {
         if (unitDied.IsPlayerUnit)
-        {
-            AudioManager.instance.Play("SoundCancel03");
             Debug.Log($"{unitDied.Character.Base.Name} player has died");
-        }
+     
         else
             Debug.Log($"{unitDied.Character.Base.Name} enemy has died");
+
+        AudioManager.instance.Play("DeathSound");
 
         dialogBox.ShowBattleInfo($"{unitDied.Character.Base.Name} died");
 
@@ -727,6 +729,8 @@ public class BattleSystem : MonoBehaviour
             playerUnit.UpdateHP();
 
             dialogBox.ShowBattleInfo($"{playerUnit.Character.Base.Name} used {item.Base.Name}");
+
+            AudioManager.instance.Play("SoundCancel01");
             yield return new WaitForSeconds(2f);
 
             yield return CheckPoisonEffect(playerUnit);
@@ -734,6 +738,10 @@ public class BattleSystem : MonoBehaviour
             dialogBox.EnableItemDetails(false);
             dialogBox.EnableItemSelector(false);
             StartCoroutine(DecideNextTurn());
+        }
+        else
+        {
+            AudioManager.instance.Play("SoundCancel03");
         }
         
     }
@@ -814,7 +822,8 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
-            if(currentAction == 0)
+            AudioManager.instance.Play("SoundCancel01");
+            if (currentAction == 0)
             {
                 PlayerSkill();
             }
@@ -857,6 +866,7 @@ public class BattleSystem : MonoBehaviour
 
         if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M)))
         {
+            AudioManager.instance.Play("SoundCancel01");
             DecideWhatToDoSkill(skill, playerUnit);
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
@@ -914,6 +924,7 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
+            AudioManager.instance.Play("SoundCancel03");
             dialogBox.ShowBattleInfo($"{skill.GetReason(battleUnit)}");
             
         }
@@ -936,6 +947,7 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
+            AudioManager.instance.Play("SoundCancel01");
             WhatToDoTargetSkill(enemyUnits[currentTarget]);
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
@@ -967,6 +979,7 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
+            AudioManager.instance.Play("SoundCancel01");
             WhatToDoTargetSkill(playerUnits[currentTarget]);
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
@@ -1082,6 +1095,7 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
+            AudioManager.instance.Play("SoundCancel01");
             StartCoroutine(SwitchPositions(currentPosition));
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
@@ -1128,6 +1142,7 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M))
         {
+            AudioManager.instance.Play("SoundCancel01");
             StartCoroutine(UseItem(dialogBox.BattleItems[currentItem]));
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))

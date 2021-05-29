@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Headbutt
   description: Deals damage to enemy
-  damage: 100
+  damage: 90
   accuracy: 85
   alwaysHits: 0
   turnsCooldown: 1

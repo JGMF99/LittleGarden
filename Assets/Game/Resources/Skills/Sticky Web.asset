@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Sticky Web
   m_EditorClassIdentifier: 
   name: Sticky Web
-  description: Stuns all enemies for few turns
+  description: Stuns all enemies for 1 turn
   damage: 0
   accuracy: 80
   alwaysHits: 0
   turnsCooldown: 5
   minTurns: 1
-  maxTurns: 2
-  position: 1
+  maxTurns: 1
+  position: 0
   category: 1
   area: 1
   effects:

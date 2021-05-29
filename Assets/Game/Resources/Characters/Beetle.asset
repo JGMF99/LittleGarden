@@ -17,11 +17,11 @@ MonoBehaviour:
   frontSprite: {fileID: -103866332369062293, guid: 735b854991bca154990e295ac7e1ef57, type: 3}
   sideSprite: {fileID: -103866332369062293, guid: 735b854991bca154990e295ac7e1ef57, type: 3}
   specie: 3
-  maxHp: 2000
-  attack: 40
-  defense: 200
-  speed: 100
-  expYield: 200
+  maxHp: 120
+  attack: 20
+  defense: 40
+  speed: 50
+  expYield: 30
   growthRate: 1
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: 4803ad700047dd645a80e7e168348285, type: 2}

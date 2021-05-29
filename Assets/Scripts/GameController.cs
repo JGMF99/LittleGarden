@@ -137,7 +137,7 @@ public class GameController : MonoBehaviour
 
             enemy.Team = enemy.Team.OrderBy(o => o.Position).ToList();
             AudioManager.instance.StopPlaying("RoamMusic");
-            AudioManager.instance.Play("BattleMusic");
+            AudioManager.instance.Play("BossMusic");
 
 
             battleSystem.StartBattle(team, enemy, playerController.items, null);
@@ -172,7 +172,8 @@ public class GameController : MonoBehaviour
 
     private void EndBattle(bool obj, EnemyParty enemies, Recruitment recruitment)
     {
-        state = GameState.FreeRoam; 
+        state = GameState.FreeRoam;
+        AudioManager.instance.StopPlaying("BossMusic");
         AudioManager.instance.StopPlaying("BattleMusic");
         AudioManager.instance.Play("RoamMusic");
 

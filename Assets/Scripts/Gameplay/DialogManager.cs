@@ -61,6 +61,7 @@ public class DialogManager : MonoBehaviour
     {
         if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.M)) && !isTyping)
         {
+            AudioManager.instance.Play("SoundCancel01");
             ++currentLine;
             if (currentLine < dialog.Lines.Count)
             {

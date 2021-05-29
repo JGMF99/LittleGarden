@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Pheromones
   m_EditorClassIdentifier: 
   name: Pheromones
-  description: Increases attacks accuracy
+  description: Decreases enemy attack accuracy
   damage: 0
   accuracy: 100
   alwaysHits: 1
-  turnsCooldown: 4
+  turnsCooldown: 1
   minTurns: 0
   maxTurns: 0
   position: 2
@@ -26,6 +26,6 @@ MonoBehaviour:
   effects:
     boosts:
     - stat: 3
-      boost: 3
+      boost: -1
     status: 0
-  target: 2
+  target: 1

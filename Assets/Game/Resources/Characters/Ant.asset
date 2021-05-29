@@ -18,17 +18,17 @@ MonoBehaviour:
   sideSprite: {fileID: -6149002445307445397, guid: a2630da48894c0f4e9c5dec688774bc7, type: 3}
   specie: 0
   maxHp: 100
-  attack: 10
+  attack: 25
   defense: 5
   speed: 70
-  expYield: 100
+  expYield: 30
   growthRate: 0
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: b556311db1353e84cb098d774ca8ce3e, type: 2}
     level: 1
+  - skillBase: {fileID: 11400000, guid: 471536940c6e40844b06324bf3661ea6, type: 2}
+    level: 1
   - skillBase: {fileID: 11400000, guid: 8b790eccafea138439f3c7816269dbe5, type: 2}
     level: 2
-  - skillBase: {fileID: 11400000, guid: 471536940c6e40844b06324bf3661ea6, type: 2}
-    level: 3
   - skillBase: {fileID: 11400000, guid: 5a590c50c9617ce46930330b9c2a1bcf, type: 2}
-    level: 5
+    level: 4

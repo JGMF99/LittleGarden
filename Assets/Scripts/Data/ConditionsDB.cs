@@ -15,6 +15,7 @@ public class ConditionsDB
              StartMessage = "has been poisoned",
              OnStart = (BattleUnit battleUnit, int minTurns, int maxTurns) =>
              {
+                 AudioManager.instance.Play("SoundMove02");
                  battleUnit.Character.PoisonTime = Random.Range(minTurns,maxTurns);
                  battleUnit.ShowPoison(true);
                  Debug.Log($"Poison for {battleUnit.Character.PoisonTime} turns");
@@ -30,6 +31,7 @@ public class ConditionsDB
                  {
                      battleUnit.Character.PoisonTime--;
 
+                     AudioManager.instance.Play("SoundMove02");
                      battleUnit.Character.UpdateHP(battleUnit.Character.MaxHp / 8);
                  }
 
@@ -44,6 +46,7 @@ public class ConditionsDB
              StartMessage = "has been stunned",
              OnStart = (BattleUnit battleUnit, int minTurns, int maxTurns) =>
              {
+                 AudioManager.instance.Play("StunSound");
                  battleUnit.Character.StunTime = Random.Range(minTurns,maxTurns);
                  battleUnit.ShowStun(true);
                  Debug.Log($"Stunned for {battleUnit.Character.StunTime} turns");

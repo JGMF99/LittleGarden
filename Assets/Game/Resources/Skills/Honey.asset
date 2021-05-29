@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Honey
   description: Heal ally
-  damage: 60
+  damage: 2
   accuracy: 100
   alwaysHits: 1
-  turnsCooldown: 3
+  turnsCooldown: 1
   minTurns: 0
   maxTurns: 0
   position: 0

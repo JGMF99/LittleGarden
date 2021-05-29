@@ -20,12 +20,12 @@ MonoBehaviour:
   turnsCooldown: 4
   minTurns: 0
   maxTurns: 0
-  position: 1
+  position: 2
   category: 1
   area: 0
   effects:
     boosts:
     - stat: 1
-      boost: -3
+      boost: -2
     status: 0
   target: 1

@@ -45,6 +45,8 @@ public class QuestGiver : MonoBehaviour
 
         player.Quests.Add(quest);
 
+        AudioManager.instance.Play("SoundConfirm01");
+
         OnQuestWindowClose.Invoke();
     }
 

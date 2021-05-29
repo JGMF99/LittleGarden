@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Thorny Prison
   description: Damage all enemies
-  damage: 150
+  damage: 25
   accuracy: 90
   alwaysHits: 0
   turnsCooldown: 4

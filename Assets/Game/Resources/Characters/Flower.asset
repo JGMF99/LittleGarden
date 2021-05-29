@@ -19,9 +19,9 @@ MonoBehaviour:
   specie: 7
   maxHp: 80
   attack: 5
-  defense: 20
+  defense: 10
   speed: 5
-  expYield: 80
+  expYield: 40
   growthRate: 0
   learnableSkills:
   - skillBase: {fileID: 11400000, guid: f2d66fb72dc97444f984006cc5bfc72f, type: 2}

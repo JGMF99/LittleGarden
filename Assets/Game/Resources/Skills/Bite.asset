@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Bite
   description: Deals damage to the enemy
-  damage: 40
+  damage: 70
   accuracy: 95
   alwaysHits: 0
   turnsCooldown: 1

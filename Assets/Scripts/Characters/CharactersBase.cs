@@ -32,10 +32,10 @@ public class CharactersBase : ScriptableObject
     {
         if(growthRate == GrowthRate.Fast)
         {
-            return 4 * (level * level * level) / 5;
+            return 8 * (level * level * level) / 3;
         }else if(growthRate == GrowthRate.MediumFast)
         {
-            return level * level * level;
+            return level * level * level * 4;
         }
 
         return -1;

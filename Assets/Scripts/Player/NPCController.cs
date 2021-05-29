@@ -14,6 +14,8 @@ public class NPCController : MonoBehaviour, Interactable
         Shopper s = GetComponent<Shopper>();
         Boss b = GetComponent<Boss>();
 
+        AudioManager.instance.Play("SoundCancel01");
+
         StartCoroutine(DialogManager.Instance.ShowDialog(dialog, qg, rg, s, b));
     }
 }

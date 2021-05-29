@@ -244,6 +244,12 @@ public class Inventory : MonoBehaviour
 
             characterInfo.UpdateSelectedCharacter(CharacterParty.Team[selectedCharacter]);
             healthPotsTxt.text = "Health Potion x" + pc.GetItemQuantity("Health Potion").ToString();
+
+            AudioManager.instance.Play("SoundCancel01");
+        }
+        else
+        {
+            AudioManager.instance.Play("SoundCancel03");
         }
     }
 }

@@ -213,7 +213,7 @@ public class Character
 
     public void TakeDamage(Skill skill, Character attacker, bool isPlayerUnit)
     {
-        AudioManager.instance.Play("SoundMove04");
+        AudioManager.instance.Play("DamageSound");
         float modifiers = Random.Range(0.85f, 1f);
         float a = (2 * attacker.Level + 10) / 250f;
         float d = a * skill.Base.Damage * ((float)attacker.Attack / Defense) + 2;

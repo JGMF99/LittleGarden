@@ -38,6 +38,12 @@ public class SellingItem : MonoBehaviour
             playerController.Items.Add(new Item(item, false));
 
             shopPanel.UpdateMoneyText(playerController.Money);
+
+            AudioManager.instance.Play("SoundCancel01");
+        }
+        else
+        {
+            AudioManager.instance.Play("SoundCancel03");
         }
     }
 }

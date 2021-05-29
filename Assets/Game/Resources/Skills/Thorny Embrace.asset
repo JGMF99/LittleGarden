@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Thorny Embrace
   description: Deals damage to enemy
-  damage: 80
+  damage: 60
   accuracy: 95
   alwaysHits: 0
   turnsCooldown: 3

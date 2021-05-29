@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Pollination
   description: Heals team members
-  damage: 20
+  damage: 6
   accuracy: 100
   alwaysHits: 1
   turnsCooldown: 6
