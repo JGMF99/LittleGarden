@@ -591,7 +591,10 @@ public class BattleSystem : MonoBehaviour
     IEnumerator CharacterDied(BattleUnit unitDied)
     {
         if (unitDied.IsPlayerUnit)
+        {
+            AudioManager.instance.Play("SoundCancel03");
             Debug.Log($"{unitDied.Character.Base.Name} player has died");
+        }
         else
             Debug.Log($"{unitDied.Character.Base.Name} enemy has died");
 
@@ -622,6 +625,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator GainExperience(BattleUnit deadEnemyUnit)
     {
         //Exp gain
+        AudioManager.instance.Play("SoundTwinkle02");
         int expYield = deadEnemyUnit.Character.Base.ExpYield;
         int enemyLevel = deadEnemyUnit.Character.Level;
 
