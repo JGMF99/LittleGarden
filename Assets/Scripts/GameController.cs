@@ -188,6 +188,8 @@ public class GameController : MonoBehaviour
 
     private void OpenInventory()
     {
+        
+        AudioManager.instance.Play("SoundMove03");
         var team = playerController.GetComponent<CharacterParty>();
         var items = playerController.Items;
         var quests = playerController.Quests;
@@ -202,6 +204,7 @@ public class GameController : MonoBehaviour
 
     private void OpenOptions()
     {
+        AudioManager.instance.Play("SoundMove03");
         bool isOpen = OptionsMenu.instance.Open();
 
         if (isOpen)

@@ -137,6 +137,7 @@ public class Character
 
     public void UpdateHP(int damage)
     {
+        
         HP = Mathf.Clamp(HP - damage, 0, MaxHp);
     }
 
@@ -200,7 +201,7 @@ public class Character
 
     public void Heal(Skill skill, Character healer)
     {
-
+        AudioManager.instance.Play("SoundTwinkle02");
         float modifiers = Random.Range(0.85f, 1f);
         float a = (2 * healer.Level + 10) / 250f;
         float d = a * skill.Base.Damage * ((float)healer.Defense / Defense) + 2;
@@ -212,7 +213,7 @@ public class Character
 
     public void TakeDamage(Skill skill, Character attacker, bool isPlayerUnit)
     {
-
+        AudioManager.instance.Play("SoundMove04");
         float modifiers = Random.Range(0.85f, 1f);
         float a = (2 * attacker.Level + 10) / 250f;
         float d = a * skill.Base.Damage * ((float)attacker.Attack / Defense) + 2;

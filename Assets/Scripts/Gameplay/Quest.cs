@@ -23,6 +23,7 @@ public class Quest
 
     public void Complete()
     {
+        AudioManager.instance.Play("SoundConfirm02");
         questState = QuestState.Completed;
         Debug.Log(title + " was completed");
     }

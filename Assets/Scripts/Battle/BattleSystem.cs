@@ -143,6 +143,7 @@ public class BattleSystem : MonoBehaviour
 
         if (nextTurn.IsPlayerUnit)
         {
+            AudioManager.instance.Play("SoundConfirm03");
             dialogBox.SetSkillNames(nextTurn.Character.Skills);
             for(var i = 0; i < dialogBox.SkillText.Count; i++)
             {
