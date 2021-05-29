@@ -75,7 +75,8 @@ public enum CharacterSpecie
     Firefly,
     Butterfly,
     Plant,
-    Flower
+    Flower,
+    MutantFlytrap
 }
 
 public enum Stat

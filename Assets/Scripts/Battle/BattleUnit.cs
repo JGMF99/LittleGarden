@@ -12,8 +12,6 @@ public class BattleUnit : MonoBehaviour
     [SerializeField] GameObject stun;
     [SerializeField] GameObject poison;
 
-    bool isDead;
-
     public Character Character{get; set; }
     public bool IsPlayerUnit { get => isPlayerUnit; set => isPlayerUnit = value; }
 
@@ -24,8 +22,6 @@ public class BattleUnit : MonoBehaviour
         hpBar.gameObject.SetActive(false);
         Character = null;
 
-        isDead = false;
-
         ShowPoison(false);
         ShowStun(false);
     }
@@ -34,7 +30,7 @@ public class BattleUnit : MonoBehaviour
     {
 
        
-        if(character != null && !isDead)
+        if(character != null)
         {
             Character = character;
 
@@ -49,6 +45,8 @@ public class BattleUnit : MonoBehaviour
         }
         else
         {
+            Character = null;
+            GetComponent<Image>().sprite = null;
             GetComponent<Image>().color = Color.clear;
 
             ShowPoison(false);
@@ -76,8 +74,8 @@ public class BattleUnit : MonoBehaviour
 
     public void BattleUnitDied()
     {
-        isDead = true;
         GetComponent<Image>().color = Color.clear;
+        GetComponent<Image>().sprite = null;
         hpBar.gameObject.SetActive(false);
         ShowPoison(false);
         ShowStun(false);

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Plant
   description: 
-  frontSprite: {fileID: 8591533231565066105, guid: 035f1c061b8bc2c41a76e041eab4a167, type: 3}
-  sideSprite: {fileID: 8591533231565066105, guid: 035f1c061b8bc2c41a76e041eab4a167, type: 3}
+  frontSprite: {fileID: -7955193268978623404, guid: 576d0f97e2e335a49ad29744b1067e03, type: 3}
+  sideSprite: {fileID: -7955193268978623404, guid: 576d0f97e2e335a49ad29744b1067e03, type: 3}
   specie: 6
   maxHp: 80
   attack: 15

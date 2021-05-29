@@ -460,6 +460,7 @@ public class BattleSystem : MonoBehaviour
                 yield return GainExperience(targetUnit);
             }
 
+            targetUnit.Character = null;
         }
     }
 
@@ -521,6 +522,8 @@ public class BattleSystem : MonoBehaviour
                     yield return GainExperience(targetUnit);
                 }
 
+                targetUnit.Character = null;
+
             }
         }
 
@@ -551,6 +554,8 @@ public class BattleSystem : MonoBehaviour
             {
                 yield return GainExperience(sourceUnit);
             }
+
+            sourceUnit.Character = null;
 
         }
         //-----------------------------------------------
@@ -599,8 +604,6 @@ public class BattleSystem : MonoBehaviour
             Debug.Log($"{unitDied.Character.Base.Name} enemy has died");
 
         dialogBox.ShowBattleInfo($"{unitDied.Character.Base.Name} died");
-
-        yield return new WaitForSeconds(2f);
 
         yield return new WaitForSeconds(2f);
 
@@ -790,19 +793,19 @@ public class BattleSystem : MonoBehaviour
     void HandleActionSelection()
     {
 
-        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentAction < 3)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && currentAction < 3)
         {
             ++currentAction;
         }
-        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentAction > 0)
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && currentAction > 0)
         {
             --currentAction;
         }
-        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && currentAction < 2)
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && currentAction < 2)
         {
             currentAction += 2;
         }
-        else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && currentAction > 1)
+        else if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && currentAction > 1)
         {
             currentAction -= 2;
         }
@@ -831,19 +834,19 @@ public class BattleSystem : MonoBehaviour
 
     void HandleSkillSelection()
     {
-        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentSkill < playerUnit.Character.Skills.Count - 1)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && currentSkill < playerUnit.Character.Skills.Count - 1)
         {
             ++currentSkill;
         }
-        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentSkill > 0)
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && currentSkill > 0)
         {
             --currentSkill;
         }
-        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && currentSkill < playerUnit.Character.Skills.Count - 2)
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && currentSkill < playerUnit.Character.Skills.Count - 2)
         {
             currentSkill += 2;
         }
-        else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && currentSkill > 1)
+        else if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && currentSkill > 1)
         {
             currentSkill -= 2;
         }
@@ -919,11 +922,11 @@ public class BattleSystem : MonoBehaviour
 
     void HandleTargetEnemy()
     {
-        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentTarget < enemyUnits.Count - 1)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && currentTarget < enemyUnits.Count - 1)
         {
             ++currentTarget;
         }
-        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentTarget > 0)
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && currentTarget > 0)
         {
             --currentTarget;
         }
@@ -950,11 +953,11 @@ public class BattleSystem : MonoBehaviour
 
     void HandleTargetAlly()
     {
-        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentTarget < playerUnits.Count - 1)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && currentTarget < playerUnits.Count - 1)
         {
             ++currentTarget;
         }
-        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentTarget > 0)
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && currentTarget > 0)
         {
             --currentTarget;
         }
@@ -1046,15 +1049,15 @@ public class BattleSystem : MonoBehaviour
     void HandlePlayerPosition()
     {
 
-        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentPosition < playerGrid.Count - 1 && currentPosition + 1 != playerUnit.Character.Position)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && currentPosition < playerGrid.Count - 1 && currentPosition + 1 != playerUnit.Character.Position)
         {
             ++currentPosition;
         }
-        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentPosition > 0 && currentPosition - 1 != playerUnit.Character.Position)
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && currentPosition > 0 && currentPosition - 1 != playerUnit.Character.Position)
         {
             --currentPosition;
         }
-        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && currentPosition < playerGrid.Count - 2)
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && currentPosition < playerGrid.Count - 3)
         {
             if(currentPosition + 2 == playerUnit.Character.Position)
             {
@@ -1063,7 +1066,7 @@ public class BattleSystem : MonoBehaviour
             }else
                 currentPosition += 2;
         }
-        else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && currentPosition > 1)
+        else if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && currentPosition > 1)
         {
             if (currentPosition - 2 == playerUnit.Character.Position)
             {
@@ -1102,7 +1105,7 @@ public class BattleSystem : MonoBehaviour
                 playerGrid[i].GetComponent<Image>().color = new Color(0, 1, 0, 0.5f);
             else if(i == playerUnit.Character.Position)
                 playerGrid[i].GetComponent<Image>().color = new Color(1, 0, 0, 0.5f);
-            else if(playerGrid[i].Character != null)
+            else if(playerGrid[i].Character != null && playerGrid[i].Character.HP > 0)
                 playerGrid[i].GetComponent<Image>().color = Color.white;
             else
                 playerGrid[i].GetComponent<Image>().color = Color.clear;
@@ -1112,11 +1115,11 @@ public class BattleSystem : MonoBehaviour
 
     void HandleItemSelection()
     {
-        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && currentItem  == 0)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && currentItem  == 0)
         {
             ++currentItem;
         }
-        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && currentItem == 1)
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && currentItem == 1)
         {
             --currentItem;
         }

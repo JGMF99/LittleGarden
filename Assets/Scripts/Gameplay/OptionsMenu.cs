@@ -28,6 +28,8 @@ public class OptionsMenu : MonoBehaviour
 
     public bool Open()
     {
+        slider.value = AudioManager.instance.currentVol;
+
         if (!Menu.activeSelf)
         {
             Menu.SetActive(true);
